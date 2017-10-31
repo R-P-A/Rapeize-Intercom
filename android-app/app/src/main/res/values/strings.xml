@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Rapeize Intercom</string>
+    <string name="button_check_in">Check In</string>
+    <string name="button_check_out">Check Out</string>
+    <string name="button_list_users">List Online Users</string>
+    <string name="button_open">Open Door</string>
+    <string name="welcome">Welcome costumer!</string>
+    <string name="welcome_question">What is your need today?</string>
+    <string name="button_text">ToDo: Implement button handler</string>
+</resources>
