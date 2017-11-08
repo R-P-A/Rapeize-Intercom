@@ -19,5 +19,11 @@
 
 using namespace std;
 
+class DateTime {
+	private:
+
+	public:
+};
+
 
 #endif	// DATETIME
