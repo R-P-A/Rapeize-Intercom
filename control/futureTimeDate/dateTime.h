@@ -16,13 +16,30 @@
 #define DATETIME
 
 #include <iostream>
+#include <ctime>
+#include <sstream>
 
 using namespace std;
 
 class DateTime {
 	private:
+		tm* timeDateInfo;
+		void updateTimeDateInfo();
 
 	public:
+		DateTime();
+		~DateTime();
+		string getCurrentDate();
+		string getCurrentTime();
+		string getCurrentDateTime();
+		int getYear();
+		int getMonth();
+		int getDay();
+		string getWeekDay();
+		int getDaysYear();
+		int getHour();
+		int getMin();
+		int getSec();
 };
 
 

@@ -35,7 +35,5 @@ int main() {
 	cout << "Days since 01/01: " << timeInfo->tm_yday << endl;
 	cout << "Daylight Saving Time: " << timeInfo->tm_isdst << endl;
 
-
-
-	delete timeInfo;
+	return 0;
 }
