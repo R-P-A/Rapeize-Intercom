@@ -1,6 +1,6 @@
 /** 
  *	@author  Rafael Pintar Alevato
- *	@date    17/09/2017
+ *	@date    11/11/2017
  *	@version 1.0 
  *	
  *	@brief Create a doubly linked list which is sorted by id.
@@ -19,48 +19,56 @@
 #include <exception>
 #include "model.h"
 #include "node.h"
-#include "myString.h"
 
 using namespace std;
 
 class SortedList {
 	private:
+		/**
+		 *	The first node of the list.
+		 */
 		Node<Model*>* head;
-		Node<Model*>* findNode(int id);
+
+		/**
+		 *	Find a node in the list and returns the pointer to it.
+		 *	@param newModel The id of the node to be found.
+		 */
+		Node<Model*>* findNode(unsigned long int id);
 
 	public:
 		SortedList();
+
 		~SortedList();
 
 		/**
-		 *	Insert a Model in the list sorted. If the Model id already exists
-		 *	in the list returns false.
-		 *	@param newModel		The new Model to be inserted.
-		 *	@return	Wheter the Model was inserted correctly.
+		 *	Insert a Model in the list sorted.
+		 *	@param newModel The new Model to be inserted.
+		 *	@throw string "Inserted NULL Model".
+		 *	@throw string "Id already exists".
+		 *	@throw string "Exception not predicted".
 		 */
-		bool insert(Model* newModel);
+		void insert(Model* newModel);
 
 		/**
 		 *	Remove a Model in the list with this id.
-		 *	@param id 	The id of the Model to be removed.
-		 *	@return	Wheter the Model was removed correctly.
+		 *	@param id The id of the Model to be removed.
+		 *	@throw string "Id not found".
 		 */
-		bool remove(int id);
+		void remove(unsigned long int id);
 
 		/**
 		 *	Edit a Model in the list with this id.
-		 *	@param modifiedModel 	The new Model that substitute the data in
-		 *							the old Model which shares the same id.
-		 *	@return	Wheter the Model was removed correctly.
+		 *	@param modifiedModel The new Model that substitute the data in the old Model which shares the same id.
+		 *	@throw string "Id not found".
 		 */
-		bool edit(Model* modifiedModel);
+		void edit(Model* modifiedModel);
 
 		/**
 		 *	Find a Model in the list with this id and returns it.
 		 *	@param id 	The id of the Model to be returned.
 		 *	@return	The pointer to the Model desired. NULL if the Model don't exist.
 		 */
-		Model* find(int id);
+		Model* find(unsigned long int id);
 
 		/**
 		 *	Print in a string all the ids of the Models in the list separated by \n.
