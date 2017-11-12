@@ -1,11 +1,5 @@
 #include "dateTime.h"
 
-void DateTime::updateTimeDateInfo() {
-	time_t secsSinceEpoch;
-	time(&secsSinceEpoch);
-	timeDateInfo = localtime(&secsSinceEpoch);
-}
-
 DateTime::DateTime() {
 	updateTimeDateInfo();
 }
@@ -13,30 +7,26 @@ DateTime::DateTime() {
 DateTime::~DateTime() {
 }
 
-string DateTime::getCurrentDate() {
-	updateTimeDateInfo();
-	stringstream date;
-	date << getYear() << "/" << getMonth() << "/" << getDay() << " " << getWeekDay();
-	return date.str();
-}
-
-string DateTime::getCurrentTime() {
-	updateTimeDateInfo();
-	stringstream time;
-	time.width(2);
-	time.fill('0');
-	time << getHour() << ":";
-	time.width(2);
-	time.fill('0');
-	time << getMin() << ":";
-	time.width(2);
-	time.fill('0');
-	time << getSec();
-	return time.str();
+void DateTime::updateTimeDateInfo() {
+	time_t secsSinceEpoch;
+	time(&secsSinceEpoch);
+	timeDateInfo = localtime(&secsSinceEpoch);
 }
 
 string DateTime::getCurrentDateTime() {
-	return getCurrentDate() + " " + getCurrentTime();
+	updateTimeDateInfo();
+	stringstream dateTime;
+	dateTime << getYear() << "/" << getMonth() << "/" << getDay() << " " << getWeekDay() << " ";
+	dateTime.width(2);
+	dateTime.fill('0');
+	dateTime << getHour() << ":";
+	dateTime.width(2);
+	dateTime.fill('0');
+	dateTime << getMin() << ":";
+	dateTime.width(2);
+	dateTime.fill('0');
+	dateTime << getSec();
+	return dateTime.str();
 }
 
 int DateTime::getYear() {
