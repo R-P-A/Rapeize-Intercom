@@ -1,4 +1,10 @@
-#include "readInput.h"
+#ifndef READINPUT
+#define READINPUT
+
+#include <iostream>
+#include <string>
+
+using namespace std;
 
 string getString() {
 	string input;
@@ -52,17 +58,6 @@ bool readNumber(numberType& output) {
 	output = 0;
 	return false;
 }
-template bool readNumber<int>(int& input);
-template bool readNumber<short int>(short int& input);
-template bool readNumber<long int>(long int& input);
-template bool readNumber<long long int>(long long int& input);
-template bool readNumber<unsigned int>(unsigned int& input);
-template bool readNumber<unsigned short int>(unsigned short int& input);
-template bool readNumber<unsigned long int>(unsigned long int& input);
-template bool readNumber<unsigned long long int>(unsigned long long int& input);
-template bool readNumber<float>(float& input);
-template bool readNumber<double>(double& input);
-template bool readNumber<long double>(long double& input);
 
 bool readString(string& output) {
 	output = getString();
@@ -78,3 +73,5 @@ bool readChar(char& output) {
 	output = 0;
 	return false;
 }
+
+#endif
