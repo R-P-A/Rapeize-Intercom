@@ -4,9 +4,6 @@ DateTime::DateTime() {
 	updateTimeDateInfo();
 }
 
-DateTime::~DateTime() {
-}
-
 void DateTime::updateTimeDateInfo() {
 	time_t secsSinceEpoch;
 	time(&secsSinceEpoch);

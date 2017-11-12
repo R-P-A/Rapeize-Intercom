@@ -3,7 +3,6 @@
 #include "sortedList.h"
 #include "model.h"
 #include "node.h"
-#include "myString.h"
 
 using namespace std;
 
@@ -21,17 +20,18 @@ SortedList::~SortedList() {
 	head = NULL;	// Officially empty
 }
 
-bool SortedList::insert(Model* newModel) {
+void SortedList::insert(Model* newModel) {
 	int targetId = newModel->getId();
 
 	if (newModel == NULL) {
-		return false;
+		throw "Inserted NULL Model";
+		return;
 	}
 
 	// If head don't exist, newModel is head
 	if (head == NULL) {
 		head = new Node<Model*>(newModel);
-		return true;
+		return;
 	}
 	
 	Node<Model*>* currentNode = head;
@@ -43,7 +43,8 @@ bool SortedList::insert(Model* newModel) {
 		
 		// If id already exists don't insert
 		if (currentId == targetId) {
-			return false;
+			throw "Id already exists";
+			return;
 		}
 
 		// It's sorted, so if currentId > targetId try to insert before the current node
@@ -57,26 +58,31 @@ bool SortedList::insert(Model* newModel) {
 				head = newNode;
 			}
 			currentNode->setPrev(newNode);
-			return true;
+			return;
 		}
 
 		// Check if it's the last node in the list. If it's, insert newNode in the last position.
 		if (currentNode->getNext() == NULL) {
 			currentNode->setNext(new Node<Model*>(newModel));
-			return true;
+			return;
 		}
 		currentNode = currentNode->getNext();
 	}
-	return false;	//Sanity check
+	throw "Exception not predicted";	//Sanity check
+	return;
 }
 
-bool SortedList::remove(int id) {
+void SortedList::remove(unsigned long int id) {
 	Node<Model*>* trashNode = findNode(id);
 
 	// If found the node in the list, delete it.
 	if (trashNode != NULL) {
 		Node<Model*>* nextNode = trashNode->getNext();
 		Node<Model*>* prevNode = trashNode->getPrev();
+
+		if (trashNode == head) {
+			head = NULL;
+		}
 		if (nextNode != NULL) {
 			nextNode->setPrev(prevNode);
 			// New head if it's the new first node.
@@ -87,25 +93,24 @@ bool SortedList::remove(int id) {
 		if (prevNode != NULL) {
 			prevNode->setNext(nextNode);
 		}
-		if (trashNode == head) {
-			head = NULL;
-		}
 		delete trashNode;
-		return true;
+		return;
 	}
-	return false;
+	throw "Id not found";
+	return;
 }
 
-bool SortedList::edit(Model* modifiedModel) {
+void SortedList::edit(Model* modifiedModel) {
 	Node<Model*>* nodeToModify = findNode(modifiedModel->getId());
 	if (nodeToModify == NULL) {
-		return false;
+		throw "Id not found";
+		return;
 	}
 	nodeToModify->setData(modifiedModel);
-	return true;
+	return;
 }
 
-Node<Model*>* SortedList::findNode(int id) {
+Node<Model*>* SortedList::findNode(unsigned long int id) {
 	Node<Model*>* currentNode = head;
 	while (currentNode != NULL) {
 		int currentId = currentNode->getData()->getId();
@@ -120,7 +125,7 @@ Node<Model*>* SortedList::findNode(int id) {
 	return NULL;
 }
 
-Model* SortedList::find(int id) {
+Model* SortedList::find(unsigned long int id) {
 	Node<Model*>* node = findNode(id);
 	if (node != NULL) {
 		return node->getData();
@@ -134,7 +139,7 @@ string SortedList::listAll() {
 	int currentId;
 	while (currentNode != NULL) {
 		currentId = currentNode->getData()->getId();
-		result.append(numberToString(currentId) + "\n");
+		result.append(to_string(currentId) + "\n");
 		currentNode = currentNode->getNext();
 	}
 	return result;
