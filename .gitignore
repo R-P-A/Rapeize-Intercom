@@ -10,6 +10,10 @@ android-app/captures
 .externalNativeBuild
 
 # Control and General C++
-*.exe 
+*.exe
 *.o
 *.out
+
+# Sublime Project
+*.sublime-project
+*.sublime-workspace
