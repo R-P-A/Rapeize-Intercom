@@ -13,6 +13,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <iterator>
 
 using namespace std;
 
@@ -152,12 +153,11 @@ void readChar(char& output) {
 	throw "More than 1 character";
 }
 
-void readFileLine(string& output, string fileName) {
+void readFile(string& output, string fileName) {
 	string input;
 	ifstream inputFile(fileName.c_str());
 	if (inputFile.is_open()) {
-		getStringLine(input, inputFile);
-		inputFile.close();
+		input.assign((istreambuf_iterator<char>(inputFile)), (istreambuf_iterator<char>()));
 	} else {
 		throw "Couldn't open the file";
 	}
@@ -167,6 +167,17 @@ void readFileLine(string& output, string fileName) {
 
 void writeFileClear(string& input, string fileName) {
 	ofstream outputFile(fileName.c_str());
+	if (outputFile.is_open()) {
+		outputFile << input;
+		outputFile.close();
+	} else {
+		throw "Couldn't open the file";
+	}
+	return;
+}
+
+void writeFileAppend(string& input, string fileName) {
+	ofstream outputFile(fileName.c_str(), fstream::app);
 	if (outputFile.is_open()) {
 		outputFile << input;
 		outputFile.close();

@@ -39,3 +39,16 @@ void ControlInterface::checkout(User currentUser) {
 void ControlInterface::openDoor(User currentUser) {
 	
 }
+
+// // For future use
+// void readFileLine(string& output, string fileName) {
+// 	string input;
+// 	ifstream inputFile(fileName.c_str());
+// 	if (inputFile.is_open()) {
+// 		getStringLine(input, inputFile);
+// 	} else {
+// 		throw "Couldn't open the file";
+// 	}
+// 	output = input;
+// 	return;
+// }

@@ -50,15 +50,21 @@ int main() {
 	}
 	cout << "String read: " << tempString << endl << endl;
 
-	cout << "Testing the use of readFileLineand writeFileClear (output should be This is a Line.)" << endl;
-	tempString = "This is a Line.";
+	cout << "Testing the use of readFileLineand writeFileClear (output should be This is a line.)" << endl;
+	tempString = "This is a line.\n";
 	try {
 		writeFileClear(tempString, "temp.txt");
 	} catch (const char* e) {
 		cout << e << endl;
 	}
+	tempString = "This is another line.";
 	try {
-		readFileLine(tempString, "temp.txt");		
+		writeFileAppend(tempString, "temp.txt");
+	} catch (const char* e) {
+		cout << e << endl;
+	}
+	try {
+		readFile(tempString, "temp.txt");		
 	} catch (const char* e) {
 		cout << e << endl;
 	}
