@@ -1,3 +1,12 @@
+/** 
+ *	@author  Rafael Pintar Alevato
+ *	@date    11/11/2017
+ *	@version 1.0 
+ *	
+ *	@brief Functions that read from the standard input.
+ *
+ */
+
 #ifndef READINPUT
 #define READINPUT
 

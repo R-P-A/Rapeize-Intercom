@@ -3,7 +3,11 @@
  *	@date    11/11/2017
  *	@version 1.0 
  *	
- *	@brief User class.
+ *	@brief User class that has id, name, phone, email and allowed period.
+ *
+ *	@section DESCRIPTION
+ *	
+ *	The id depends on the the other class Model. This class extends Model.
  *
  */
 
