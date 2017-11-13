@@ -43,29 +43,28 @@ class SortedList {
 		/**
 		 *	Insert a Model in the list sorted.
 		 *	@param newModel The new Model to be inserted.
-		 *	@throw string "Inserted NULL Model".
-		 *	@throw string "Id already exists".
-		 *	@throw string "Exception not predicted".
+		 *	@throw const char* "Inserted NULL Model".
+		 *	@throw const char* "Id already exists".
 		 */
 		void insert(Model* newModel);
 
 		/**
 		 *	Remove a Model in the list with this id.
 		 *	@param id The id of the Model to be removed.
-		 *	@throw string "Id not found".
+		 *	@throw const char* "Id not found".
 		 */
 		void remove(unsigned long int id);
 
 		/**
 		 *	Edit a Model in the list with this id.
 		 *	@param modifiedModel The new Model that substitute the data in the old Model which shares the same id.
-		 *	@throw string "Id not found".
+		 *	@throw const char* "Id not found".
 		 */
 		void edit(Model* modifiedModel);
 
 		/**
 		 *	Find a Model in the list with this id and returns it.
-		 *	@param id 	The id of the Model to be returned.
+		 *	@param id The id of the Model to be returned.
 		 *	@return	The pointer to the Model desired. NULL if the Model don't exist.
 		 */
 		Model* find(unsigned long int id);
