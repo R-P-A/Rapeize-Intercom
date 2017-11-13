@@ -4,6 +4,10 @@
 
 using namespace std;
 
+Model::Model() {
+	id = 0;
+}
+
 Model::Model(unsigned long int value) {
 	id = value;
 }
