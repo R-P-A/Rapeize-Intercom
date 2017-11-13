@@ -16,6 +16,9 @@
 
 #include <iostream>
 #include <fstream>
+#include <string>
+#include <iterator>
+#include "myio.h"
 #include "user.h"
 #include "sortedList.h"
 #include "dateTime.h"
@@ -24,7 +27,7 @@ class ControlInterface {
 	private:
 		SortedList* activeUsers = new SortedList();
 		
-		TimeDate myTime;
+		DateTime myTime;
 
 	public:
 		ControlInterface();
@@ -37,9 +40,11 @@ class ControlInterface {
 
 		void editUser(User inputUser);
 
-		User getUser(unsigned long int id);
+		User* findUser(unsigned long int id, string& fileName);
 
-		SortedList getActiveUsers();
+		User* findActiveUser(unsigned long int id);
+
+		SortedList* getActiveUsers();
 
 		void checkin(User currentUser);
 

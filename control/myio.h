@@ -153,6 +153,11 @@ void readChar(char& output) {
 	throw "More than 1 character";
 }
 
+/**
+ *	Read the whole content of a file and saves on a string.
+ *	@param output The string to save the file read.
+ *	@throw const char* "Couldn't open the file".
+ */
 void readFile(string& output, string fileName) {
 	string input;
 	ifstream inputFile(fileName.c_str());
@@ -165,6 +170,11 @@ void readFile(string& output, string fileName) {
 	return;
 }
 
+/**
+ *	Clear a file and write the content given by a string.
+ *	@param input The string to write in the file.
+ *	@throw const char* "Couldn't open the file".
+ */
 void writeFileClear(string& input, string fileName) {
 	ofstream outputFile(fileName.c_str());
 	if (outputFile.is_open()) {
@@ -176,6 +186,11 @@ void writeFileClear(string& input, string fileName) {
 	return;
 }
 
+/**
+ *	Write the content given by a string in a file appending to the end.
+ *	@param input The string to write in the file.
+ *	@throw const char* "Couldn't open the file".
+ */
 void writeFileAppend(string& input, string fileName) {
 	ofstream outputFile(fileName.c_str(), fstream::app);
 	if (outputFile.is_open()) {
