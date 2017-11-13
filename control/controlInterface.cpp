@@ -1,26 +1,10 @@
 #include "controlInterface.h"
 
 ControlInterface::ControlInterface() {
-	
+	// Turn on webserver
 }
 
 ControlInterface::~ControlInterface() {
-	
-}
-
-void ControlInterface::checkin(User currentUser) {
-	
-}
-
-void ControlInterface::checkout(User currentUser) {
-	
-}
-
-SortedList ControlInterface::getActiveUsers() {
-	
-}
-
-void ControlInterface::openDoor(User currentUser) {
 	
 }
 
@@ -37,5 +21,21 @@ void ControlInterface::editUser(User inputUser) {
 }
 
 User ControlInterface::getUser(unsigned long int id) {
+	
+}
+
+SortedList ControlInterface::getActiveUsers() {
+	
+}
+
+void ControlInterface::checkin(User currentUser) {
+	
+}
+
+void ControlInterface::checkout(User currentUser) {
+	
+}
+
+void ControlInterface::openDoor(User currentUser) {
 	
 }

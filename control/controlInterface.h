@@ -15,6 +15,7 @@
 #define CONTROLINTERFACE
 
 #include <iostream>
+#include <fstream>
 #include "user.h"
 #include "sortedList.h"
 #include "dateTime.h"
@@ -30,14 +31,6 @@ class ControlInterface {
 
 		~ControlInterface();
 
-		void checkin(User currentUser);
-
-		void checkout(User currentUser);
-
-		SortedList getActiveUsers();
-
-		void openDoor(User currentUser);
-
 		void createUser(User inputUser);
 
 		void removeUser(unsigned long int id);
@@ -45,6 +38,14 @@ class ControlInterface {
 		void editUser(User inputUser);
 
 		User getUser(unsigned long int id);
+
+		SortedList getActiveUsers();
+
+		void checkin(User currentUser);
+
+		void checkout(User currentUser);
+
+		void openDoor(User currentUser);
 	
 };
 

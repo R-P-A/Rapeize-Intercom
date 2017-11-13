@@ -11,21 +11,23 @@
 #define READINPUT
 
 #include <iostream>
+#include <fstream>
 #include <string>
 
 using namespace std;
 
 /**
  *	Function used internally to get a string in the standard input.
+ *	@param input String passed as reference to be changed
+ *	@param std_input Define the standard input (cin, file)
  *	@return The string read.
  */
-string getString() {
-	string input;
+void getStringLine(string& input, istream& stdInput = cin) {
 	// Get input in string format
 	while (input.empty()) {
-		getline(cin, input);
+		getline(stdInput, input);
 	}
-	return input;
+	return;
 }
 
 /**
@@ -36,7 +38,8 @@ string getString() {
  */
 template <typename numberType>
 void readSignedNumber(numberType& output) {
-	string input = getString();
+	string input;
+	getStringLine(input);
 	output = 0;
 	int i = 0;
 	int signal = 1;
@@ -93,7 +96,8 @@ void readSignedNumber(numberType& output) {
  */
 template <typename numberType>
 void readUnsignedNumber(numberType& output) {
-	string input = getString();
+	string input;
+	getStringLine(input);
 	output = 0;
 	int i = 0;
 
@@ -123,7 +127,9 @@ void readUnsignedNumber(numberType& output) {
  *	@param output The variable to save the string read.
  */
 void readString(string& output) {
-	output = getString();
+	string input;
+	getStringLine(input);
+	output = input;
 	return;
 }
 
@@ -134,7 +140,8 @@ void readString(string& output) {
  */
 
 void readChar(char& output) {
-	string input = getString();
+	string input;
+	getStringLine(input);
 
 	// Check if the string contains only 1 character
 	if (input.length() == 1) {
@@ -143,6 +150,30 @@ void readChar(char& output) {
 	}
 	output = 0;
 	throw "More than 1 character";
+}
+
+void readFileLine(string& output, string fileName) {
+	string input;
+	ifstream inputFile(fileName.c_str());
+	if (inputFile.is_open()) {
+		getStringLine(input, inputFile);
+		inputFile.close();
+	} else {
+		throw "Couldn't open the file";
+	}
+	output = input;
+	return;
+}
+
+void writeFileClear(string& input, string fileName) {
+	ofstream outputFile(fileName.c_str());
+	if (outputFile.is_open()) {
+		outputFile << input;
+		outputFile.close();
+	} else {
+		throw "Couldn't open the file";
+	}
+	return;
 }
 
 #endif
