@@ -25,7 +25,6 @@ void SortedList::insert(Model* newModel) {
 
 	if (newModel == NULL) {
 		throw "Inserted NULL Model";
-		return;
 	}
 
 	// If head don't exist, newModel is head
@@ -44,7 +43,6 @@ void SortedList::insert(Model* newModel) {
 		// If id already exists don't insert
 		if (currentId == targetId) {
 			throw "Id already exists";
-			return;
 		}
 
 		// It's sorted, so if currentId > targetId try to insert before the current node
@@ -68,8 +66,7 @@ void SortedList::insert(Model* newModel) {
 		}
 		currentNode = currentNode->getNext();
 	}
-	throw "Exception not predicted";	//Sanity check
-	return;
+	return;	//Sanity check
 }
 
 void SortedList::remove(unsigned long int id) {
@@ -97,14 +94,12 @@ void SortedList::remove(unsigned long int id) {
 		return;
 	}
 	throw "Id not found";
-	return;
 }
 
 void SortedList::edit(Model* modifiedModel) {
 	Node<Model*>* nodeToModify = findNode(modifiedModel->getId());
 	if (nodeToModify == NULL) {
 		throw "Id not found";
-		return;
 	}
 	nodeToModify->setData(modifiedModel);
 	return;

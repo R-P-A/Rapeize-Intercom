@@ -10,6 +10,8 @@
  *	A header file for the SortedList class that contains a Node
  *	with generic type of data. It contains two pointers, one for
  *	the next node and one for the previous node.
+ *
+ *	@tparam Any data type.
  */
 
 #ifndef NODE
