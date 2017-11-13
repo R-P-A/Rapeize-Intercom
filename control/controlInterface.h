@@ -22,6 +22,7 @@
 class ControlInterface {
 	private:
 		SortedList* activeUsers = new SortedList();
+		
 		TimeDate myTime;
 
 	public:
