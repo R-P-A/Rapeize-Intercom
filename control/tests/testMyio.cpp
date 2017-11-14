@@ -1,5 +1,5 @@
 #include <iostream>
-#include "readInput.h"
+#include "myio.h"
 
 using namespace std;
 
@@ -49,6 +49,26 @@ int main() {
 		cout << e << endl;
 	}
 	cout << "String read: " << tempString << endl << endl;
+
+	cout << "Testing the use of readFileLineand writeFileClear (output should be This is a line.)" << endl;
+	tempString = "This is a line.\n";
+	try {
+		writeFileClear(tempString, "temp.txt");
+	} catch (const char* e) {
+		cout << e << endl;
+	}
+	tempString = "This is another line.";
+	try {
+		writeFileAppend(tempString, "temp.txt");
+	} catch (const char* e) {
+		cout << e << endl;
+	}
+	try {
+		readFile(tempString, "temp.txt");		
+	} catch (const char* e) {
+		cout << e << endl;
+	}
+	cout << tempString << endl;
 
 	return 0;
 }

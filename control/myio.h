@@ -7,26 +7,23 @@
  *
  */
 
-#ifndef READINPUT
-#define READINPUT
+#ifndef MYIO
+#define MYIO
 
 #include <iostream>
+#include <fstream>
 #include <string>
+#include <iterator>
 
 using namespace std;
 
 /**
  *	Function used internally to get a string in the standard input.
+ *	@param input String passed as reference to be changed
+ *	@param std_input Define the standard input (cin, file)
  *	@return The string read.
  */
-string getString() {
-	string input;
-	// Get input in string format
-	while (input.empty()) {
-		getline(cin, input);
-	}
-	return input;
-}
+void getStringLine(string& input, istream& stdInput = cin);
 
 /**
  *	Read a signed number on the standard input.
@@ -36,7 +33,8 @@ string getString() {
  */
 template <typename numberType>
 void readSignedNumber(numberType& output) {
-	string input = getString();
+	string input;
+	getStringLine(input);
 	output = 0;
 	int i = 0;
 	int signal = 1;
@@ -93,7 +91,8 @@ void readSignedNumber(numberType& output) {
  */
 template <typename numberType>
 void readUnsignedNumber(numberType& output) {
-	string input = getString();
+	string input;
+	getStringLine(input);
 	output = 0;
 	int i = 0;
 
@@ -122,10 +121,7 @@ void readUnsignedNumber(numberType& output) {
  *	Read a string on the standard input.
  *	@param output The variable to save the string read.
  */
-void readString(string& output) {
-	output = getString();
-	return;
-}
+void readString(string& output);
 
 /**
  *	Read a char on the standard input.
@@ -133,16 +129,26 @@ void readString(string& output) {
  *	@throw const char* "More than 1 character".
  */
 
-void readChar(char& output) {
-	string input = getString();
+void readChar(char& output);
 
-	// Check if the string contains only 1 character
-	if (input.length() == 1) {
-		output = input[0];
-		return;
-	}
-	output = 0;
-	throw "More than 1 character";
-}
+/**
+ *	Read the whole content of a file and saves on a string.
+ *	@param output The string to save the file read.
+ *	@throw const char* "Couldn't open the file".
+ */
+void readFile(string& output, string fileName);
+/**
+ *	Clear a file and write the content given by a string.
+ *	@param input The string to write in the file.
+ *	@throw const char* "Couldn't open the file".
+ */
+void writeFileClear(string& input, string fileName);
 
-#endif
+/**
+ *	Write the content given by a string in a file appending to the end.
+ *	@param input The string to write in the file.
+ *	@throw const char* "Couldn't open the file".
+ */
+void writeFileAppend(string& input, string fileName);
+
+#endif	// MYIO
