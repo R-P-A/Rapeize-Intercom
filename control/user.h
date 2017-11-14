@@ -21,34 +21,37 @@ class User : public Model{
 	private:
 		string name;
 
+		string password;
+
 		string phone;
 
 		string email;
 
 		/**
-		 *	The allowed period must be in the following format "W,W,hh:mm,hh:mm".
-		 *	The CSV values means: first week day (0-6), last week day (0-6), first hour:min, last hour:min.
+		 *	Beginning week day in the format of whole name (Sunday, Monday, etc..).
 		 */
-		string allowedPeriod;
+		string beginWeekDay;
+
+		/**
+		 *	End week day in the format of whole name (Sunday, Monday, etc..).
+		 */
+		string endWeekDay;
+
+		/**
+		 *	Beginning hour and minute of the day in the following format: hh:mm (Example: 08:30).
+		 */
+		string beginTime;
+
+		/**
+		 *	End hour and minute of the day in the following format: hh:mm (Example: 18:30).
+		 */
+		string endTime;
 
 	public:
 		/**
 		 *	Constructor that set all variables to "".
 		 */
 		User();
-
-		/**
-		 *	Constructor that set all variables to the values given.
-		 *	The allowed period must be in the following format "W,W,hh:mm,hh:mm".
-		 *	The CSV values means: first week day (0-6), last week day (0-6), first hour:min, last hour:min.
-		 *	@param idInput The value to set the id.
-		 *	@param nameInput The value to set the name.
-		 *	@param phoneInput The value to set the phone.
-		 *	@param emailInput The value to set the email.
-		 *	@param allowedPeriodInput The value to set the allowedPeriod.
-		 *	@throw const char* "Allowed period in wrong format".
-		 */
-		User(unsigned long int idInput, string nameInput, string phoneInput, string emailInput, string allowedPeriodInput);
 
 		/**
 		 *	@return The name.
@@ -59,6 +62,16 @@ class User : public Model{
 		 *	@param value The value to set the name.
 		 */
 		void setName(string value);
+
+		/**
+		 *	@return The name.
+		 */
+		string getPassword();
+
+		/**
+		 *	@param value The value to set the name.
+		 */
+		void setPassword(string value);
 
 		/**
 		 *	@return The phone.
@@ -81,19 +94,44 @@ class User : public Model{
 		void setEmail(string value);
 
 		/**
-		 *	Get the allowed period in the following format "W,W,hh:mm,hh:mm".
-		 *	The CSV values means: first week day (0-6), last week day (0-6), first hour:min, last hour:min.
-		 *	@return The Allowed Period.
+		 *	@return Beginning week day in the format of whole name (Sunday, Monday, etc..).
 		 */
-		string getAllowedPeriod();
+		string getBeginWeekDay();
 
 		/**
-		 *	Set the allowed period in the following format "W,W,hh:mm,hh:mm".
-		 *	The CSV values means: first week day (0-6), last week day (0-6), first hour:min, last hour:min.
-		 *	@param value The value to set the Allowed Period.
-		 *	@throw const char* "Wrong format".
+		 *	@param value The value to set the beginning week day in the format of whole name (Sunday, Monday, etc..).
 		 */
-		void setAllowedPeriod(string value);
+		void setBeginWeekDay(string value);
+
+		/**
+		 *	@return End week day in the format of whole name (Sunday, Monday, etc..).
+		 */
+		string getEndWeekDay();
+
+		/**
+		 *	@param value The value to set the end week day in the format of whole name (Sunday, Monday, etc..).
+		 */
+		void setEndWeekDay(string value);
+
+		/**
+		 *	@return Beginning hour and minute of the day in the following format: hh:mm (Example: 08:30).
+		 */
+		string getBeginTime();
+
+		/**
+		 *	@param value The value of beginning hour and minute of the day in the following format: hh:mm (Example: 08:30).
+		 */
+		void setBeginTime(string value);
+
+		/**
+		 *	@return End hour and minute of the day in the following format: hh:mm (Example: 08:30).
+		 */
+		string getEndTime();
+
+		/**
+		 *	@param value The value of end hour and minute of the day in the following format: hh:mm (Example: 08:30).
+		 */
+		void setEndTime(string value);
 };
 
 #endif	// USER

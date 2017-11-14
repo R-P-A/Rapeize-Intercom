@@ -2,20 +2,14 @@
 
 User::User() {
 	id = 0;
+	password = "";
 	name = "";
 	phone = "";
 	email = "";
-	allowedPeriod = "";
-}
-
-User::User(unsigned long int idInput, string nameInput, string phoneInput, string emailInput, string allowedPeriodInput) {
-
-	setAllowedPeriod(allowedPeriodInput);
-
-	id = idInput;
-	name = nameInput;
-	phone = phoneInput;
-	email = emailInput;
+	beginWeekDay = "";
+	endWeekDay = "";
+	beginTime = "";
+	endTime = "";
 }
 
 string User::getName() {
@@ -24,6 +18,14 @@ string User::getName() {
 
 void User::setName(string value) {
 	name = value;
+}
+
+string User::getPassword() {
+	return password;
+}
+
+void User::setPassword(string value) {
+	password = value;
 }
 
 string User::getPhone() {
@@ -42,32 +44,66 @@ void User::setEmail(string value) {
 	email = value;
 }
 
-string User::getAllowedPeriod() {
-	return allowedPeriod;
+string User::getBeginWeekDay() {
+	return beginWeekDay;
 }
 
-void User::setAllowedPeriod(string value) {
-	// If it's in the wrong format "W,W,hh:mm,hh:mm,", throw exception
-	if ( value[0] > '6'   || value[0] < '0'  ||
-		 value[1] != ','  ||
-		 value[2] > '6'   || value[2] < '0'  ||
-		 value[3] != ','  ||
-		 value[4] > '2'   || value[4] < '0'  ||
-		 (value[4] == '2' && value[5] > '3') ||		// Checks if hour is > 23
-		 value[5] > '9'   || value[5] < '0'  ||
-		 value[6] != ':'  ||
-		 value[7] > '5'   || value[7] < '0'  ||
-		 value[8] > '9'   || value[8] < '0'  ||
-		 value[9] != ','  ||
-		 value[10] > '2'  || value[10] < '0' ||
-		 (value[10] == '2'&& value[11] > '3')||		// Checks if hour is > 23
-		 value[11] > '9'  || value[11] < '0' ||
-		 value[12] != ':' ||
-		 value[13] > '5'  || value[13] < '0' ||
-		 value[14] > '9'  || value[14] < '0' ||
-		 value[15] != '\n' ) {
-		throw "allowedPeriod in wrong format";
+void User::setBeginWeekDay(string value) {
+	value[0] = toupper(value[0]);
+	if (value == "Sunday" || value == "Monday" ||
+		value == "Thursday" || value == "Wednesday" ||
+		value == "Thirsday" || value == "Friday" ||
+		value == "Friday") {
+		beginWeekDay = value;
+		return;
 	}
+	throw "Invalid input";
+}
 
-	allowedPeriod = value;
+string User::getEndWeekDay() {
+	return endWeekDay;
+}
+
+void User::setEndWeekDay(string value) {
+	value[0] = toupper(value[0]);
+	if (value == "Sunday" || value == "Monday" ||
+		value == "Thursday" || value == "Wednesday" ||
+		value == "Thirsday" || value == "Friday" ||
+		value == "Friday") {
+		endWeekDay = value;
+		return;
+	}
+	throw "Invalid input format";
+}
+
+string User::getBeginTime() {
+	return beginTime;
+}
+
+void User::setBeginTime(string value) {
+	if (value[0] > '2'   || value[0] < '0'  ||
+		(value[0] == '2' && value[1] > '3') ||		// Checks if hour is > 23
+		value[1] > '9'   || value[1] < '0'  ||
+		value[2] != ':'  ||
+		value[3] > '5'   || value[3] < '0'  ||
+		value[4] > '9'   || value[4] < '0') {
+		throw "Invalid input format";
+	}
+	beginTime = value;
+}
+
+string User::getEndTime() {
+	return endTime;
+}
+
+void User::setEndTime(string value) {
+	if (value[0] > '2'   || value[0] < '0'  ||
+		(value[0] == '2' && value[1] > '3') ||		// Checks if hour is > 23
+		value[1] > '9'   || value[1] < '0'  ||
+		value[2] != ':'  ||
+		value[3] > '5'   || value[3] < '0'  ||
+		value[4] > '9'   || value[4] < '0') {
+		throw "Invalid input format";
+	}
+	endTime = value;
 }

@@ -23,13 +23,17 @@
 #include "sortedList.h"
 #include "dateTime.h"
 
+using namespace std;
+
 class ControlInterface {
 	private:
 		SortedList* activeUsers = new SortedList();
 		
 		DateTime myTime;
 
-		string userDatabaseName;
+		string userDatabaseFileName;
+
+		User* dbStringLineToUser(string& dbLine);
 
 	public:
 		ControlInterface();
@@ -46,9 +50,9 @@ class ControlInterface {
 
 		void editUser(User* inputUser);
 
-		User* findUser(unsigned long int id);
+		User* getUser(unsigned long int id);
 
-		User* findActiveUser(unsigned long int id);
+		User* getActiveUser(unsigned long int id);
 
 		SortedList* getActiveUsers();
 
