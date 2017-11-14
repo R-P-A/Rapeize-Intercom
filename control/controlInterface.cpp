@@ -3,12 +3,6 @@
 ControlInterface::ControlInterface() {
 	// Turn on webserver
 	userDatabaseName = "userDatabase.csv";
-	string buffer = "";
-	try {
-		writeFileClear(buffer, userDatabaseName);		
-	} catch (char const* e) {
-		cout << e << endl;
-	}
 }
 
 ControlInterface::~ControlInterface() {
@@ -24,10 +18,12 @@ void ControlInterface::setUserDatabaseName(string name) {
 }
 
 void ControlInterface::createUser(User* inputUser) {
+	User* bufferUser = new User();
 	try {
-		findUser(inputUser->getId());
+		bufferUser = findUser(inputUser->getId());
 	} catch (char const* e) {
-		if (e == "Couldn't open the file") {
+		string str(e);
+		if (str == "Couldn't open the file") {
 			throw e;
 		}
 		string buffer = to_string(inputUser->getId()) + "," +
@@ -42,6 +38,7 @@ void ControlInterface::createUser(User* inputUser) {
 		}
 		return;
 	}
+	delete bufferUser;
 	throw "Existing user";
 }
 
@@ -58,37 +55,34 @@ User* ControlInterface::findUser(unsigned long int id) {
 	string buffer;
 	ifstream inputFile(userDatabaseName.c_str());
 	if (inputFile.is_open()) {
-		int i = 0;
 		while (getline(inputFile, input)){
-			i = 0;
-			int j = 0;
-			for (j = 0, buffer = ""; input[i] != ','; i++, j++) {
-				buffer[j] = input[i];
-				cout << buffer[j];
+			int i = 0;
+			for (buffer = ""; input[i] != ','; i++) {
+				buffer += input[i];
 			}
-			cout << endl;
-			if (id == stoi(buffer)) {
+			if (id == stoul(buffer)) {
 				User* output = new User();
+				output->setId(stoul(buffer));
+
+				for (buffer = "", i++; input[i] != ','; i++) {
+					buffer += input[i];
+				}
 				output->setName(buffer);
-				for (j = 0, buffer = "", i++; input[i] != ','; i++, j++) {
-					buffer[j] = input[i];
-					cout << buffer[j];
+
+				for (buffer = "", i++; input[i] != ','; i++) {
+					buffer += input[i];
 				}
-				cout << endl;
 				output->setPhone(buffer);
-				for (j = 0, buffer = "", i++; input[i] != ','; i++, j++) {
-					buffer[j] = input[i];
-					cout << buffer[j];
+
+				for (buffer = "", i++; input[i] != ','; i++) {
+					buffer += input[i];
 				}
-				cout << endl;
 				output->setEmail(buffer);
-				for (j = 0, buffer = "", i++; input[i] != '\0'; i++, j++) {
-					buffer[j] = input[i];
-					cout << buffer[j];
+
+				for (buffer = "", i++; input[i] != '\0'; i++) {
+					buffer += input[i];
 				}
-				cout << endl;
-				buffer[j+1] = '\n';
-				//cout << buffer << endl;
+				buffer += '\n';
 				output->setAllowedPeriod(buffer);
 				return output;
 			}
