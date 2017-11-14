@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef READINPUT
-#define READINPUT
+#ifndef MYIO
+#define MYIO
 
 #include <iostream>
 #include <fstream>
@@ -23,13 +23,7 @@ using namespace std;
  *	@param std_input Define the standard input (cin, file)
  *	@return The string read.
  */
-void getStringLine(string& input, istream& stdInput = cin) {
-	// Get input in string format
-	while (input.empty()) {
-		getline(stdInput, input);
-	}
-	return;
-}
+void getStringLine(string& input, istream& stdInput = cin);
 
 /**
  *	Read a signed number on the standard input.
@@ -127,12 +121,7 @@ void readUnsignedNumber(numberType& output) {
  *	Read a string on the standard input.
  *	@param output The variable to save the string read.
  */
-void readString(string& output) {
-	string input;
-	getStringLine(input);
-	output = input;
-	return;
-}
+void readString(string& output);
 
 /**
  *	Read a char on the standard input.
@@ -140,66 +129,26 @@ void readString(string& output) {
  *	@throw const char* "More than 1 character".
  */
 
-void readChar(char& output) {
-	string input;
-	getStringLine(input);
-
-	// Check if the string contains only 1 character
-	if (input.length() == 1) {
-		output = input[0];
-		return;
-	}
-	output = 0;
-	throw "More than 1 character";
-}
+void readChar(char& output);
 
 /**
  *	Read the whole content of a file and saves on a string.
  *	@param output The string to save the file read.
  *	@throw const char* "Couldn't open the file".
  */
-void readFile(string& output, string fileName) {
-	string input;
-	ifstream inputFile(fileName.c_str());
-	if (inputFile.is_open()) {
-		input.assign((istreambuf_iterator<char>(inputFile)), (istreambuf_iterator<char>()));
-	} else {
-		throw "Couldn't open the file";
-	}
-	output = input;
-	return;
-}
-
+void readFile(string& output, string fileName);
 /**
  *	Clear a file and write the content given by a string.
  *	@param input The string to write in the file.
  *	@throw const char* "Couldn't open the file".
  */
-void writeFileClear(string& input, string fileName) {
-	ofstream outputFile(fileName.c_str());
-	if (outputFile.is_open()) {
-		outputFile << input;
-		outputFile.close();
-	} else {
-		throw "Couldn't open the file";
-	}
-	return;
-}
+void writeFileClear(string& input, string fileName);
 
 /**
  *	Write the content given by a string in a file appending to the end.
  *	@param input The string to write in the file.
  *	@throw const char* "Couldn't open the file".
  */
-void writeFileAppend(string& input, string fileName) {
-	ofstream outputFile(fileName.c_str(), fstream::app);
-	if (outputFile.is_open()) {
-		outputFile << input;
-		outputFile.close();
-	} else {
-		throw "Couldn't open the file";
-	}
-	return;
-}
+void writeFileAppend(string& input, string fileName);
 
-#endif
+#endif	// MYIO

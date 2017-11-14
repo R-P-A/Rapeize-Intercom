@@ -29,28 +29,34 @@ class ControlInterface {
 		
 		DateTime myTime;
 
+		string userDatabaseName;
+
 	public:
 		ControlInterface();
 
 		~ControlInterface();
 
-		void createUser(User inputUser);
+		string getUserDatabaseName();
+
+		void setUserDatabaseName(string name);
+
+		void createUser(User* inputUser);
 
 		void removeUser(unsigned long int id);
 
-		void editUser(User inputUser);
+		void editUser(User* inputUser);
 
-		User* findUser(unsigned long int id, string& fileName);
+		User* findUser(unsigned long int id);
 
 		User* findActiveUser(unsigned long int id);
 
 		SortedList* getActiveUsers();
 
-		void checkin(User currentUser);
+		void checkin(User* currentUser);
 
-		void checkout(User currentUser);
+		void checkout(User* currentUser);
 
-		void openDoor(User currentUser);
+		void openDoor(User* currentUser);
 	
 };
 

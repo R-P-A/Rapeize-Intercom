@@ -65,7 +65,7 @@ void User::setAllowedPeriod(string value) {
 		 value[12] != ':' ||
 		 value[13] > '5'  || value[13] < '0' ||
 		 value[14] > '9'  || value[14] < '0' ||
-		 value[15] != ',' ) {
+		 value[15] != '\n' ) {
 		throw "allowedPeriod in wrong format";
 	}
 

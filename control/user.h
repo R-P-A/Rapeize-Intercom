@@ -26,7 +26,7 @@ class User : public Model{
 		string email;
 
 		/**
-		 *	The allowed period must be in the following format "W,W,hh:mm,hh:mm,".
+		 *	The allowed period must be in the following format "W,W,hh:mm,hh:mm".
 		 *	The CSV values means: first week day (0-6), last week day (0-6), first hour:min, last hour:min.
 		 */
 		string allowedPeriod;
@@ -39,7 +39,7 @@ class User : public Model{
 
 		/**
 		 *	Constructor that set all variables to the values given.
-		 *	The allowed period must be in the following format "W,W,hh:mm,hh:mm,".
+		 *	The allowed period must be in the following format "W,W,hh:mm,hh:mm".
 		 *	The CSV values means: first week day (0-6), last week day (0-6), first hour:min, last hour:min.
 		 *	@param idInput The value to set the id.
 		 *	@param nameInput The value to set the name.
@@ -81,14 +81,14 @@ class User : public Model{
 		void setEmail(string value);
 
 		/**
-		 *	Get the allowed period in the following format "W,W,hh:mm,hh:mm,".
+		 *	Get the allowed period in the following format "W,W,hh:mm,hh:mm".
 		 *	The CSV values means: first week day (0-6), last week day (0-6), first hour:min, last hour:min.
 		 *	@return The Allowed Period.
 		 */
 		string getAllowedPeriod();
 
 		/**
-		 *	Set the allowed period in the following format "W,W,hh:mm,hh:mm,".
+		 *	Set the allowed period in the following format "W,W,hh:mm,hh:mm".
 		 *	The CSV values means: first week day (0-6), last week day (0-6), first hour:min, last hour:min.
 		 *	@param value The value to set the Allowed Period.
 		 *	@throw const char* "Wrong format".
