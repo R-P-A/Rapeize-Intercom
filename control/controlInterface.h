@@ -33,7 +33,9 @@ class ControlInterface {
 
 		string userDatabaseFileName;
 
-		User* dbStringLineToUser(string& dbLine);
+		User* databaseLineToUser(string& dbLine);
+
+		void findUser(string& databaseString, size_t& initialPosition, size_t& finalPosition, unsigned long int id);
 
 	public:
 		ControlInterface();
@@ -46,11 +48,13 @@ class ControlInterface {
 
 		void createUser(User* inputUser);
 
-		void removeUser(unsigned long int id);
+		User* readUser(unsigned long int id);
 
-		void editUser(User* inputUser);
+		void updateUser(User* inputUser);
 
-		User* getUser(unsigned long int id);
+		void deleteUser(unsigned long int id);
+
+		void clearDatabase();
 
 		User* getActiveUser(unsigned long int id);
 

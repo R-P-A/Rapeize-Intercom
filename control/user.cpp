@@ -6,10 +6,10 @@ User::User() {
 	name = "";
 	phone = "";
 	email = "";
-	beginWeekDay = "";
-	endWeekDay = "";
-	beginTime = "";
-	endTime = "";
+	beginWeekDay = "Monday";
+	endWeekDay = "Friday";
+	beginTime = "06:00";
+	endTime = "22:00";
 }
 
 string User::getName() {
@@ -57,7 +57,7 @@ void User::setBeginWeekDay(string value) {
 		beginWeekDay = value;
 		return;
 	}
-	throw "Invalid input";
+	throw "Invalid input format";
 }
 
 string User::getEndWeekDay() {
@@ -106,4 +106,18 @@ void User::setEndTime(string value) {
 		throw "Invalid input format";
 	}
 	endTime = value;
+}
+
+string User::toString() {
+	string output;
+	output = to_string(id) + "," +
+			 name + "," +
+			 password + "," +
+			 phone + "," +
+			 email + "," +
+			 beginWeekDay + "," +
+			 endWeekDay + "," +
+			 beginTime + "," +
+			 endTime + "\n";
+	return output;
 }

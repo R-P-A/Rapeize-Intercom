@@ -132,6 +132,8 @@ class User : public Model{
 		 *	@param value The value of end hour and minute of the day in the following format: hh:mm (Example: 08:30).
 		 */
 		void setEndTime(string value);
+
+		string toString();
 };
 
 #endif	// USER

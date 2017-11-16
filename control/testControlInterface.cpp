@@ -5,123 +5,151 @@
 using namespace std;
 
 int main() {
-	ControlInterface* temp = new ControlInterface();
-	string fileName = "userDatabase.csv";
-	string buffer = "";
-
-	cout << endl << "Creating the file userDatabase.csv with nothing inside" << endl;
-	try {
-		writeFileClear(buffer, fileName);		
-	} catch (char const* e) {
-		cout << e << endl;
-	}
-
-	cout << endl << "Trying to find a user with no user inside" << endl;
-	try {
-		temp->getUser(1);
-	} catch (char const* e) {
-		cout << e << endl;
-	}
-
-	cout << endl << "Creating a user in userDatabase.csv" << endl;
+	
+	ControlInterface* tempCI = new ControlInterface();
 	User* tempUser = new User();
+
+	tempCI->clearDatabase();
+
+	cout << endl << "Try to instantiate one user with wrong inputs in beginWeekDay, endWeekDay, beginTime, endTime, one at a time" << endl;
 	try {
 		tempUser->setId(14204800);
-		tempUser->setName("Rafael");
+		tempUser->setName("John");
 		tempUser->setPassword("pass");
 		tempUser->setPhone("1010");
-		tempUser->setEmail("rafael@alevato.com");
-		tempUser->setBeginWeekDay("Monday");
+		tempUser->setEmail("john@doe.com");
+		tempUser->setBeginWeekDay("aonday");
+		cout << "Sucess" << endl;
+	} catch (char const* e) {
+		cout << e << endl;
+	}
+	try {
+		tempUser->setBeginWeekDay("Tuesday");
+		tempUser->setEndWeekDay("Frday");
+		cout << "Sucess" << endl;
+	} catch (char const* e) {
+		cout << e << endl;
+	}
+	try {
 		tempUser->setEndWeekDay("Friday");
+		tempUser->setBeginTime("161:30");
+		cout << "Sucess" << endl;
+	} catch (char const* e) {
+		cout << e << endl;
+	}
+	try {
 		tempUser->setBeginTime("16:30");
+		tempUser->setEndTime("24:30");
+		cout << "Sucess" << endl;
+	} catch (char const* e) {
+		cout << e << endl;
+	}
+	try {
 		tempUser->setEndTime("23:30");
 	} catch (char const* e) {
 		cout << e << endl;
 	}
+
+	cout << endl << "Create 4 users successfully" << endl;
 	try {
-		temp->createUser(tempUser);
+		tempCI->createUser(tempUser);
+		tempUser->setId(1380);
+		tempCI->createUser(tempUser);
+		tempUser->setId(487);
+		tempCI->createUser(tempUser);
+		tempUser->setId(856489);
+		tempCI->createUser(tempUser);
+		cout << "Sucess" << endl;
 	} catch (char const* e) {
 		cout << e << endl;
 	}
 
-	cout << endl << "Creating another user in userDatabase.csv" << endl;
+	cout << endl << "Try to create one user that already exists" << endl;
 	try {
-		tempUser->setId(8456);
-		tempUser->setName("Ruan");
-		tempUser->setPassword("1234");
-		tempUser->setPhone("48999993333");
-		tempUser->setEmail("ruan@molgero.com");
+		tempCI->createUser(tempUser);
+		cout << "Sucess" << endl;
+	} catch (char const* e) {
+		cout << e << endl;
+	}
+
+	cout << endl << "Read first, middle and last user successfully" << endl;
+	try {
+		tempUser = tempCI->readUser(14204800);
+		cout << tempUser->toString();
+		tempUser = tempCI->readUser(1380);
+		cout << tempUser->toString();
+		tempUser = tempCI->readUser(856489);
+		cout << tempUser->toString();
+		cout << "Sucess" << endl;
+	} catch (char const* e) {
+		cout << e << endl;
+	}
+
+	cout << endl << "Try to read user that don't exist with an id that one existing user contains in his id" << endl;
+	try {
+		tempUser = tempCI->readUser(85648);
+		cout << "Sucess" << endl;
+	} catch (char const* e) {
+		cout << e << endl;
+	}
+
+	cout << endl << "Update first, middle and last user successfully" << endl;
+	try {
+		tempUser->setId(14204800);
+		tempUser->setName("Rafael");
+		tempUser->setPassword("asf767h");
+		tempUser->setPhone("+5548981909090");
+		tempUser->setEmail("rafael@rapeize.com");
 		tempUser->setBeginWeekDay("Monday");
 		tempUser->setEndWeekDay("Friday");
-		tempUser->setBeginTime("00:21");
-		tempUser->setEndTime("23:59");
-	} catch (char const* e) {
-		cout << e << endl;
-	}
-	try {
-		temp->createUser(tempUser);
-	} catch (char const* e) {
-		cout << e << endl;
-	}
-
-	cout << endl << "Now creating another user with a wrong input format in userDatabase.csv" << endl;
-	try {
-		tempUser->setId(123562);
+		tempUser->setBeginTime("08:30");
+		tempUser->setEndTime("19:30");
+		tempCI->updateUser(tempUser);
+		tempUser->setId(1380);
 		tempUser->setName("Kupas");
-		tempUser->setPassword("1234");
-		tempUser->setPhone("48999993333");
-		tempUser->setEmail("ygor@kupas.com");
-		tempUser->setBeginWeekDay("onday");
-		tempUser->setEndWeekDay("Friday");
-		tempUser->setBeginTime("00:21");
-		tempUser->setEndTime("23:59");
-	} catch (char const* e) {
-		cout << e << endl;
-	}
-	try {
-		temp->createUser(tempUser);
-	} catch (char const* e) {
-		cout << e << endl;
-	}
-
-	User* tempUser2 = new User();
-	cout << endl << "Trying to find 1420800 in userDatabase.csv" << endl;
-	try {
-		tempUser2 = temp->getUser(14204800);
-		cout << tempUser2->getName() << endl;
-		cout << "found!" << endl;
+		tempUser->setPassword("123");
+		tempUser->setPhone("454545");
+		tempUser->setEmail("asf#se.com");
+		tempCI->updateUser(tempUser);
+		tempUser->setId(856489);
+		tempUser->setName("Ruan");
+		tempUser->setPassword("123^sj");
+		tempUser->setPhone("gdfg333");
+		tempUser->setEmail("asflkl,kduu");
+		tempCI->updateUser(tempUser);
+		cout << "Sucess" << endl;
 	} catch (char const* e) {
 		cout << e << endl;
 	}
 
-	cout << endl << "Trying to find 8456 in userDatabase.csv" << endl;
+	cout << endl << "Try to update one user that don't exist with an id that one existing user contains in his id" << endl;
 	try {
-		tempUser2 = temp->getUser(8456);
-		cout << tempUser2->getName() << endl;
-		cout << "found!" << endl;
+		tempUser->setId(85648);
+		tempCI->updateUser(tempUser);
+		cout << "Sucess" << endl;
 	} catch (char const* e) {
 		cout << e << endl;
 	}
 
-	cout << endl << "Trying to remove 8456 in userDatabase.csv" << endl;
+	cout << endl << "Delete first, middle and last user successfully" << endl;
 	try {
-		temp->removeUser(8456);
-		cout << "Removed with sucess" << endl;
+		tempCI->deleteUser(14204800);
+		tempCI->deleteUser(1380);
+		tempCI->deleteUser(856489);
+		cout << "Sucess" << endl;
 	} catch (char const* e) {
 		cout << e << endl;
 	}
 
-	cout << endl << "Trying to find 8456 again in userDatabase.csv" << endl;
+	cout << endl << "Try to delete one user that don't exist with an id that one existing user contains in his id" << endl;
 	try {
-		tempUser2 = temp->getUser(8456);
-		cout << tempUser2->getName() << endl;
-		cout << "found!" << endl;
+		tempCI->deleteUser(48);
+		cout << "Sucess" << endl;
 	} catch (char const* e) {
 		cout << e << endl;
 	}
 
 	delete tempUser;
-	delete tempUser2;
-	delete temp;
+	delete tempCI;
 	return 0;
 }
