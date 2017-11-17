@@ -17,7 +17,28 @@ void ControlInterface::setUserDatabaseName(string name) {
 	userDatabaseFileName = name;
 }
 
-User* ControlInterface::databaseLineToUser(string& dbLine) {
+void ControlInterface::getUserIdPass(string& inputUserIdPass, unsigned long int& inputUserId, string& inputUserPass) {
+	size_t position;
+	size_t prevPosition;
+	string tempId;
+
+	position = inputUserIdPass.find(',');
+	if (position == string::npos) {
+		throw "Input line in the wrong format";
+	}
+	tempId = inputUserIdPass.substr(0, position);
+	try {
+		inputUserId = stoul(tempId);
+	} catch (const char* e) {
+		throw "Input line in the wrong format";
+	}
+
+	prevPosition = position + 1;
+	position = inputUserIdPass.find(',', prevPosition);
+	inputUserPass = inputUserIdPass.substr(prevPosition, position - prevPosition);
+}
+
+User* ControlInterface::stringToUser(string& dbLine) {
 	User* output = new User();
 	string buffer;
 	size_t prevPosition;
@@ -25,35 +46,35 @@ User* ControlInterface::databaseLineToUser(string& dbLine) {
 
 	position = dbLine.find(',');
 	if (position == string::npos) {
-		throw "Input database line in the wrong format";
+		throw "Input line in the wrong format";
 	}
 	buffer = dbLine.substr(0, position);
 	try {
 		output->setId(stoul(buffer));
-	} catch (const unsigned char* e) {
-		throw "Input database line in the wrong format";
+	} catch (const char* e) {
+		throw "Input line in the wrong format";
 	}
 
 	prevPosition = position + 1;
 	position = dbLine.find(',', prevPosition);
 	if (position == string::npos) {
-		throw "Input database line in the wrong format";
-	}
-	buffer = dbLine.substr(prevPosition, position - prevPosition);
-	output->setName(buffer);
-
-	prevPosition = position + 1;
-	position = dbLine.find(',', prevPosition);
-	if (position == string::npos) {
-		throw "Input database line in the wrong format";
+		throw "Input line in the wrong format";
 	}
 	buffer = dbLine.substr(prevPosition, position - prevPosition);
 	output->setPassword(buffer);
 
 	prevPosition = position + 1;
+	position = dbLine.find(',', prevPosition);
+	if (position == string::npos) {
+		throw "Input line in the wrong format";
+	}
+	buffer = dbLine.substr(prevPosition, position - prevPosition);
+	output->setName(buffer);
+
+	prevPosition = position + 1;
 	position = dbLine.find(",", prevPosition);
 	if (position == string::npos) {
-		throw "Input database line in the wrong format";
+		throw "Input line in the wrong format";
 	}
 	buffer = dbLine.substr(prevPosition, position - prevPosition);
 	output->setPhone(buffer);
@@ -61,7 +82,7 @@ User* ControlInterface::databaseLineToUser(string& dbLine) {
 	prevPosition = position + 1;
 	position = dbLine.find(",", prevPosition);
 	if (position == string::npos) {
-		throw "Input database line in the wrong format";
+		throw "Input line in the wrong format";
 	}
 	buffer = dbLine.substr(prevPosition, position - prevPosition);
 	output->setEmail(buffer);
@@ -69,7 +90,7 @@ User* ControlInterface::databaseLineToUser(string& dbLine) {
 	prevPosition = position + 1;
 	position = dbLine.find(",", prevPosition);
 	if (position == string::npos) {
-		throw "Input database line in the wrong format";
+		throw "Input line in the wrong format";
 	}
 	buffer = dbLine.substr(prevPosition, position - prevPosition);
 	try {
@@ -81,7 +102,7 @@ User* ControlInterface::databaseLineToUser(string& dbLine) {
 	prevPosition = position + 1;
 	position = dbLine.find(",", prevPosition);
 	if (position == string::npos) {
-		throw "Input database line in the wrong format";
+		throw "Input line in the wrong format";
 	}
 	buffer = dbLine.substr(prevPosition, position - prevPosition);
 	try {
@@ -93,7 +114,7 @@ User* ControlInterface::databaseLineToUser(string& dbLine) {
 	prevPosition = position + 1;
 	position = dbLine.find(",", prevPosition);
 	if (position == string::npos) {
-		throw "Input database line in the wrong format";
+		throw "Input line in the wrong format";
 	}
 	buffer = dbLine.substr(prevPosition, position - prevPosition);
 	try {
@@ -114,7 +135,7 @@ User* ControlInterface::databaseLineToUser(string& dbLine) {
 	return output;
 }
 
-void ControlInterface::findUser(string& databaseString, size_t& initialPosition, size_t& finalPosition, unsigned long int id) {
+void ControlInterface::searchUserInDatabase(string& databaseString, size_t& initialPosition, size_t& finalPosition, unsigned long int id) {
 	string idString = to_string(id);
 	initialPosition = databaseString.find(idString);
 	if (initialPosition == string::npos) {
@@ -128,78 +149,105 @@ void ControlInterface::findUser(string& databaseString, size_t& initialPosition,
 	}
 }
 
-void ControlInterface::createUser(User* inputUser) {
-	string databaseString;
-	string userString;
-	try {
-		readFile(databaseString, userDatabaseFileName);
-	} catch (char const* e) {
-		throw e;
-	}
-
-	size_t initialPosition, finalPosition;
-	try {
-		findUser(databaseString, initialPosition, finalPosition, inputUser->getId());
-	} catch (char const* e) {
-		userString = inputUser->toString();
-
-		try {
-			writeFileAppend(userString, userDatabaseFileName);
-		} catch (char const* e) {
-			throw e;
-		}
-		return;
-	}
-	throw "User already exists";
-}
-
-User* ControlInterface::readUser(unsigned long int id) {
-	string databaseString;
-	string userString;
-	try {
-		readFile(databaseString, userDatabaseFileName);
-	} catch (char const* e) {
-		throw e;
-	}
-
-	size_t initialPosition, finalPosition;
-	try {
-		findUser(databaseString, initialPosition, finalPosition, id);
-	} catch (char const* e) {
-		throw e;
-	}
-
-	User* output = new User();
-	userString = databaseString.substr(initialPosition, (finalPosition - initialPosition + 1));
-	output = databaseLineToUser(userString);
-	return output;
-}
-
-void ControlInterface::updateUser(User* inputUser) {
-	string databaseString;
-	string userString;
-	try {
-		readFile(databaseString, userDatabaseFileName);
-	} catch (char const* e) {
-		throw e;
-	}
-
-	size_t initialPosition, finalPosition;
-	try {
-		findUser(databaseString, initialPosition, finalPosition, inputUser->getId());
-	} catch (char const* e) {
-		throw e;
-	}
-
-	userString = inputUser->toString();
-
-	databaseString.replace(initialPosition, (finalPosition - initialPosition + 1), userString);
-
+void ControlInterface::clearDatabase() {
+	string databaseString = "";
 	try {
 		writeFileClear(databaseString, userDatabaseFileName);
 	} catch (char const* e) {
 		throw e;
 	}
+}
+
+void ControlInterface::createUser(string inputUserString) {
+	string databaseString;
+	User* inputUser = new User();
+
+	try {
+		inputUser = stringToUser(inputUserString);
+	} catch (char const* e) {
+		delete inputUser;
+		throw e;
+	}
+
+	try {
+		readFile(databaseString, userDatabaseFileName);
+	} catch (char const* e) {
+		delete inputUser;
+		throw e;
+	}
+
+	size_t initialPosition, finalPosition;
+	try {
+		searchUserInDatabase(databaseString, initialPosition, finalPosition, inputUser->getId());
+	} catch (char const* e) {
+		try {
+			writeFileAppend(inputUserString, userDatabaseFileName);
+		} catch (char const* e) {
+			delete inputUser;
+			throw e;
+		}
+		delete inputUser;
+		return;
+	}
+	delete inputUser;
+	throw "User already exists";
+}
+
+string ControlInterface::readUser(unsigned long int id) {
+	string databaseString;
+	string userString;
+	try {
+		readFile(databaseString, userDatabaseFileName);
+	} catch (char const* e) {
+		throw e;
+	}
+
+	size_t initialPosition, finalPosition;
+	try {
+		searchUserInDatabase(databaseString, initialPosition, finalPosition, id);
+	} catch (char const* e) {
+		throw e;
+	}
+
+	userString = databaseString.substr(initialPosition, (finalPosition - initialPosition + 1));
+	return userString;
+}
+
+void ControlInterface::updateUser(string inputUserString) {
+	string databaseString;
+	User* inputUser = new User();
+
+	try {
+		inputUser = stringToUser(inputUserString);
+	} catch (char const* e) {
+		delete inputUser;
+		throw e;
+	}
+	
+	try {
+		readFile(databaseString, userDatabaseFileName);
+	} catch (char const* e) {
+		delete inputUser;
+		throw e;
+	}
+
+	size_t initialPosition, finalPosition;
+	try {
+		searchUserInDatabase(databaseString, initialPosition, finalPosition, inputUser->getId());
+	} catch (char const* e) {
+		delete inputUser;
+		throw e;
+	}
+
+	databaseString.replace(initialPosition, (finalPosition - initialPosition + 1), inputUserString);
+
+	try {
+		writeFileClear(databaseString, userDatabaseFileName);
+	} catch (char const* e) {
+		delete inputUser;
+		throw e;
+	}
+	delete inputUser;
 }
 
 void ControlInterface::deleteUser(unsigned long int id) {
@@ -212,7 +260,7 @@ void ControlInterface::deleteUser(unsigned long int id) {
 
 	size_t initialPosition, finalPosition;
 	try {
-		findUser(databaseString, initialPosition, finalPosition, id);
+		searchUserInDatabase(databaseString, initialPosition, finalPosition, id);
 	} catch (char const* e) {
 		throw e;
 	}
@@ -226,32 +274,58 @@ void ControlInterface::deleteUser(unsigned long int id) {
 	}
 }
 
-void ControlInterface::clearDatabase() {
-	string databaseString = "";
+void ControlInterface::checkin(string inputUserIdPass) {
+	string databaseUser;
+	unsigned long int inputUserId, dbUserId;
+	string inputUserPass, dbUserPass;
+
 	try {
-		writeFileClear(databaseString, userDatabaseFileName);
-	} catch (char const* e) {
+		getUserIdPass(inputUserIdPass, inputUserId, inputUserPass);
+	} catch (const char* e) {
 		throw e;
 	}
+
+	try {
+		databaseUser = readUser(inputUserId);
+	} catch (const char* e) {
+		throw e;
+	}
+
+	try {
+		getUserIdPass(databaseUser, dbUserId, dbUserPass);
+	} catch (const char* e) {
+		throw e;
+	}
+
+	cout << dbUserPass << " == " << inputUserPass << endl;
+	if (dbUserPass == inputUserPass) {
+		User* checkinUser = new User();
+		try {
+			checkinUser = stringToUser(databaseUser);
+		} catch (const char* e) {
+			delete checkinUser;
+			throw e;
+		}
+		try {
+			activeUsers->insert(checkinUser);
+		} catch (const char* e) {
+			delete checkinUser;
+			throw e;
+		}
+		cout << "Door opened!" << endl;
+	} else {
+		throw "Password do not match";
+	}	
 }
 
-User* ControlInterface::getActiveUser(unsigned long int id) {
+void ControlInterface::checkout(string inputUserIdPass) {
 	
 }
 
-SortedList* ControlInterface::getActiveUsers() {
+void ControlInterface::openDoor(string inputUserIdPass) {
 	
 }
 
-void ControlInterface::checkin(User* currentUser) {
-	// User* tempUser = new User();
-	// tempUser = activeUsers->find(currentUser->getId());
-}
-
-void ControlInterface::checkout(User* currentUser) {
-	
-}
-
-void ControlInterface::openDoor(User* currentUser) {
+string ControlInterface::getActiveUsers() {
 	
 }

@@ -69,8 +69,25 @@ void SortedList::insert(Model* newModel) {
 	return;	//Sanity check
 }
 
+Model* SortedList::search(unsigned long int id) {
+	Node<Model*>* node = searchNode(id);
+	if (node != NULL) {
+		return node->getData();
+	}
+	return NULL;
+}
+
+void SortedList::update(Model* modifiedModel) {
+	Node<Model*>* nodeToModify = searchNode(modifiedModel->getId());
+	if (nodeToModify == NULL) {
+		throw "Id not found";
+	}
+	nodeToModify->setData(modifiedModel);
+	return;
+}
+
 void SortedList::remove(unsigned long int id) {
-	Node<Model*>* trashNode = findNode(id);
+	Node<Model*>* trashNode = searchNode(id);
 
 	// If found the node in the list, delete it.
 	if (trashNode != NULL) {
@@ -96,16 +113,7 @@ void SortedList::remove(unsigned long int id) {
 	throw "Id not found";
 }
 
-void SortedList::edit(Model* modifiedModel) {
-	Node<Model*>* nodeToModify = findNode(modifiedModel->getId());
-	if (nodeToModify == NULL) {
-		throw "Id not found";
-	}
-	nodeToModify->setData(modifiedModel);
-	return;
-}
-
-Node<Model*>* SortedList::findNode(unsigned long int id) {
+Node<Model*>* SortedList::searchNode(unsigned long int id) {
 	Node<Model*>* currentNode = head;
 	while (currentNode != NULL) {
 		int currentId = currentNode->getData()->getId();
@@ -116,14 +124,6 @@ Node<Model*>* SortedList::findNode(unsigned long int id) {
 			return NULL;
 		}
 		currentNode = currentNode->getNext();
-	}
-	return NULL;
-}
-
-Model* SortedList::find(unsigned long int id) {
-	Node<Model*>* node = findNode(id);
-	if (node != NULL) {
-		return node->getData();
 	}
 	return NULL;
 }

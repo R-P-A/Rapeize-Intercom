@@ -51,9 +51,9 @@ string User::getBeginWeekDay() {
 void User::setBeginWeekDay(string value) {
 	value[0] = toupper(value[0]);
 	if (value == "Sunday" || value == "Monday" ||
-		value == "Thursday" || value == "Wednesday" ||
+		value == "Tuesday" || value == "Wednesday" ||
 		value == "Thirsday" || value == "Friday" ||
-		value == "Friday") {
+		value == "Saturday") {
 		beginWeekDay = value;
 		return;
 	}
@@ -67,9 +67,9 @@ string User::getEndWeekDay() {
 void User::setEndWeekDay(string value) {
 	value[0] = toupper(value[0]);
 	if (value == "Sunday" || value == "Monday" ||
-		value == "Thursday" || value == "Wednesday" ||
+		value == "Tuesday" || value == "Wednesday" ||
 		value == "Thirsday" || value == "Friday" ||
-		value == "Friday") {
+		value == "Saturday") {
 		endWeekDay = value;
 		return;
 	}
@@ -111,8 +111,8 @@ void User::setEndTime(string value) {
 string User::toString() {
 	string output;
 	output = to_string(id) + "," +
-			 name + "," +
 			 password + "," +
+			 name + "," +
 			 phone + "," +
 			 email + "," +
 			 beginWeekDay + "," +

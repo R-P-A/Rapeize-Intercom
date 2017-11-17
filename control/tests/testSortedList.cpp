@@ -65,7 +65,7 @@ int main() {
 
 	cout << "Editing model2 with model2 (final value must be the same without exception)" << endl;
 	try {
-		tempList->edit(model2);
+		tempList->update(model2);
 	} catch (const char* e) {
 		cout << e << endl;
 	}
@@ -73,14 +73,14 @@ int main() {
 
 	cout << "Editing model3 with model3 (Exception because id of model3 is not valid)" << endl;
 	try {
-		tempList->edit(model3);
+		tempList->update(model3);
 	} catch (const char* e) {
 		cout << e << endl << endl;;
 	}
 
 	cout << "Find model4 and put model5 value equal to model4" << endl;
 	try {
-		model5 = tempList->find(model4->getId());
+		model5 = tempList->search(model4->getId());
 	} catch (const char* e) {
 		cout << e << endl;
 	}
@@ -88,7 +88,7 @@ int main() {
 
 	cout << "Find a not existing id" << endl;
 	try {
-		tempList->find(10);
+		tempList->search(10);
 	} catch (const char* e) {
 		cout << e << endl;
 	}
