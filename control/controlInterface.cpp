@@ -2,10 +2,7 @@
 
 ControlInterface::ControlInterface() {
 	userDatabaseFileName = "userDatabase.csv";
-	string databaseString, buffer;
-	size_t position, prevPosition;
-	bool notDone = true;
-	hasAdmin = false;
+	string databaseString;
 
 	// Turn on webserver
 	// ...
@@ -13,30 +10,6 @@ ControlInterface::ControlInterface() {
 	// Initialize database
 	try {
 		readFile(databaseString, userDatabaseFileName);
-	} catch (char const* e) {
-		throw e;
-	}
-	try {
-		if (databaseString == "" || databaseString == "\n") {
-			return;
-		}
-		while (notDone) {
-			position = databaseString.find(',');
-			if (position == string::npos) {
-				clearDatabase();
-				throw "Database corrupted! All data is lost!";
-			}
-			prevPosition = position + 1;
-			position = databaseString.find(',', prevPosition);
-			prevPosition = position + 1;
-			position = databaseString.find(',', prevPosition);
-			buffer = databaseString.substr(prevPosition, position - prevPosition);
-			if (to_bool(buffer)) {
-				hasAdmin = true;
-				notDone = false;
-			}
-			position = databaseString.find('\n');
-		}
 	} catch (char const* e) {
 		throw e;
 	}
@@ -75,18 +48,21 @@ User* ControlInterface::stringToUser(string& dbLine) {
 
 	position = dbLine.find(',');
 	if (position == string::npos) {
+		output = NULL;
 		throw "Input line in the wrong format";
 	}
 	buffer = dbLine.substr(0, position);
 	try {
 		output->setId(stoul(buffer));
 	} catch (const char* e) {
+		output = NULL;
 		throw "Input line in the wrong format";
 	}
 
 	prevPosition = position + 1;
 	position = dbLine.find(',', prevPosition);
 	if (position == string::npos) {
+		output = NULL;
 		throw "Input line in the wrong format";
 	}
 	buffer = dbLine.substr(prevPosition, position - prevPosition);
@@ -95,18 +71,21 @@ User* ControlInterface::stringToUser(string& dbLine) {
 	prevPosition = position + 1;
 	position = dbLine.find(',', prevPosition);
 	if (position == string::npos) {
+		output = NULL;
 		throw "Input line in the wrong format";
 	}
 	buffer = dbLine.substr(prevPosition, position - prevPosition);
 	try {
 		output->setIsAdmin(to_bool(buffer));
 	} catch (const char* e) {
+		output = NULL;
 		throw "Input line in the wrong format";
 	}
 
 	prevPosition = position + 1;
 	position = dbLine.find(',', prevPosition);
 	if (position == string::npos) {
+		output = NULL;
 		throw "Input line in the wrong format";
 	}
 	buffer = dbLine.substr(prevPosition, position - prevPosition);
@@ -115,6 +94,7 @@ User* ControlInterface::stringToUser(string& dbLine) {
 	prevPosition = position + 1;
 	position = dbLine.find(",", prevPosition);
 	if (position == string::npos) {
+		output = NULL;
 		throw "Input line in the wrong format";
 	}
 	buffer = dbLine.substr(prevPosition, position - prevPosition);
@@ -123,6 +103,7 @@ User* ControlInterface::stringToUser(string& dbLine) {
 	prevPosition = position + 1;
 	position = dbLine.find(",", prevPosition);
 	if (position == string::npos) {
+		output = NULL;
 		throw "Input line in the wrong format";
 	}
 	buffer = dbLine.substr(prevPosition, position - prevPosition);
@@ -131,6 +112,7 @@ User* ControlInterface::stringToUser(string& dbLine) {
 	prevPosition = position + 1;
 	position = dbLine.find(",", prevPosition);
 	if (position == string::npos) {
+		output = NULL;
 		throw "Input line in the wrong format";
 	}
 	buffer = dbLine.substr(prevPosition, position - prevPosition);
@@ -143,6 +125,7 @@ User* ControlInterface::stringToUser(string& dbLine) {
 	prevPosition = position + 1;
 	position = dbLine.find(",", prevPosition);
 	if (position == string::npos) {
+		output = NULL;
 		throw "Input line in the wrong format";
 	}
 	buffer = dbLine.substr(prevPosition, position - prevPosition);
@@ -155,6 +138,7 @@ User* ControlInterface::stringToUser(string& dbLine) {
 	prevPosition = position + 1;
 	position = dbLine.find(",", prevPosition);
 	if (position == string::npos) {
+		output = NULL;
 		throw "Input line in the wrong format";
 	}
 	buffer = dbLine.substr(prevPosition, position - prevPosition);
@@ -190,18 +174,31 @@ void ControlInterface::searchUserInDatabase(string& databaseString, size_t& init
 	}
 }
 
-void ControlInterface::clearDatabase() {
-	string databaseString = "";
+bool ControlInterface::isDatabaseClear() {
+	string databaseString;
 	try {
-		writeFileClear(databaseString, userDatabaseFileName);
+		readFile(databaseString, userDatabaseFileName);
 	} catch (char const* e) {
 		throw e;
 	}
+	if (databaseString == "" || databaseString == "\n") {
+		return true;
+	}
+	return false;
+
+}
+
+bool ControlInterface::canModifyDatabase(unsigned long int id) {
+	User* tempUser = (User*) activeUsers->search(id);
+	if (tempUser == NULL) {
+		return false;
+	}
+	return tempUser->getIsAdmin();
 }
 
 void ControlInterface::createUser(string inputUserString) {
-	string databaseString;
 	User* inputUser = new User();
+	string databaseString;
 
 	try {
 		inputUser = stringToUser(inputUserString);
@@ -215,6 +212,14 @@ void ControlInterface::createUser(string inputUserString) {
 	} catch (char const* e) {
 		delete inputUser;
 		throw e;
+	}
+
+	// If the user isn't admin logged-in and the file is not empty, throw exception
+	if (!canModifyDatabase(inputUser->getId())) {
+		if (!(databaseString == "" || databaseString == "\n")) {
+			delete inputUser;
+			throw "No permission to create user";
+		}
 	}
 
 	size_t initialPosition, finalPosition;
@@ -241,6 +246,11 @@ string ControlInterface::readUser(unsigned long int id) {
 		readFile(databaseString, userDatabaseFileName);
 	} catch (char const* e) {
 		throw e;
+	}
+
+	// If the user isn't admin logged-in, throw exception
+	if (!canModifyDatabase(id)) {
+		throw "No permission to create user";
 	}
 
 	size_t initialPosition, finalPosition;
@@ -272,6 +282,12 @@ void ControlInterface::updateUser(string inputUserString) {
 		throw e;
 	}
 
+	// If the user isn't admin logged-in, throw exception
+	if (!canModifyDatabase(inputUser->getId())) {
+		delete inputUser;
+		throw "No permission to create user";
+	}
+
 	size_t initialPosition, finalPosition;
 	try {
 		searchUserInDatabase(databaseString, initialPosition, finalPosition, inputUser->getId());
@@ -288,7 +304,11 @@ void ControlInterface::updateUser(string inputUserString) {
 		delete inputUser;
 		throw e;
 	}
-	delete inputUser;
+
+	User* activeUser = (User*) activeUsers->search(inputUser->getId());
+	if (activeUser != NULL) {
+		activeUsers->update(inputUser);
+	}
 }
 
 void ControlInterface::deleteUser(unsigned long int id) {
@@ -297,6 +317,11 @@ void ControlInterface::deleteUser(unsigned long int id) {
 		readFile(databaseString, userDatabaseFileName);
 	} catch (char const* e) {
 		throw e;
+	}
+
+	// If the user isn't admin logged-in, throw exception
+	if (!canModifyDatabase(id)) {
+		throw "No permission to create user";
 	}
 
 	size_t initialPosition, finalPosition;

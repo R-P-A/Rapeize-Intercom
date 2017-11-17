@@ -5,16 +5,18 @@
 using namespace std;
 
 int main() {
+	system("rm userDatabase.csv");
+
 	ControlInterface* tempCI;
 	try {
 		tempCI = new ControlInterface();
 	} catch (char const* e) {
 		cout << e << endl;
 	}
+
+	cout << "Is the database clear? " << tempCI->isDatabaseClear() << endl;
 	
 	string tempString;
-
-	tempCI->clearDatabase();
 
 	cout << endl << "Try to instantiate one user with wrong inputs in beginWeekDay, endWeekDay, beginTime, endTime, one at a time." << endl;
 	try {
