@@ -1,20 +1,49 @@
 #include "controlInterface.h"
 
 ControlInterface::ControlInterface() {
-	// Turn on webserver
 	userDatabaseFileName = "userDatabase.csv";
+	string databaseString, buffer;
+	size_t position, prevPosition;
+	bool notDone = true;
+	hasAdmin = false;
+
+	// Turn on webserver
+	// ...
+
+	// Initialize database
+	try {
+		readFile(databaseString, userDatabaseFileName);
+	} catch (char const* e) {
+		throw e;
+	}
+	try {
+		if (databaseString == "" || databaseString == "\n") {
+			return;
+		}
+		while (notDone) {
+			position = databaseString.find(',');
+			if (position == string::npos) {
+				clearDatabase();
+				throw "Database corrupted! All data is lost!";
+			}
+			prevPosition = position + 1;
+			position = databaseString.find(',', prevPosition);
+			prevPosition = position + 1;
+			position = databaseString.find(',', prevPosition);
+			buffer = databaseString.substr(prevPosition, position - prevPosition);
+			if (to_bool(buffer)) {
+				hasAdmin = true;
+				notDone = false;
+			}
+			position = databaseString.find('\n');
+		}
+	} catch (char const* e) {
+		throw e;
+	}
 }
 
 ControlInterface::~ControlInterface() {
 	delete activeUsers;
-}
-
-string ControlInterface::getUserDatabaseName() {
-	return userDatabaseFileName;
-}
-
-void ControlInterface::setUserDatabaseName(string name) {
-	userDatabaseFileName = name;
 }
 
 void ControlInterface::getUserIdPass(string& inputUserIdPass, unsigned long int& inputUserId, string& inputUserPass) {
@@ -62,6 +91,18 @@ User* ControlInterface::stringToUser(string& dbLine) {
 	}
 	buffer = dbLine.substr(prevPosition, position - prevPosition);
 	output->setPassword(buffer);
+
+	prevPosition = position + 1;
+	position = dbLine.find(',', prevPosition);
+	if (position == string::npos) {
+		throw "Input line in the wrong format";
+	}
+	buffer = dbLine.substr(prevPosition, position - prevPosition);
+	try {
+		output->setIsAdmin(to_bool(buffer));
+	} catch (const char* e) {
+		throw "Input line in the wrong format";
+	}
 
 	prevPosition = position + 1;
 	position = dbLine.find(',', prevPosition);
@@ -297,7 +338,6 @@ void ControlInterface::checkin(string inputUserIdPass) {
 		throw e;
 	}
 
-	cout << dbUserPass << " == " << inputUserPass << endl;
 	if (dbUserPass == inputUserPass) {
 		User* checkinUser = new User();
 		try {
@@ -312,7 +352,7 @@ void ControlInterface::checkin(string inputUserIdPass) {
 			delete checkinUser;
 			throw e;
 		}
-		cout << "Door opened!" << endl;
+		system("echo Door opened!\n");
 	} else {
 		throw "Password do not match";
 	}	

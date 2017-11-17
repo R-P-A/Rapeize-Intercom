@@ -33,6 +33,8 @@ class ControlInterface {
 
 		string userDatabaseFileName;
 
+		bool hasAdmin;
+
 		void getUserIdPass(string& inputUserIdPass, unsigned long int& inputUserId, string& inputUserPass);
 
 		User* stringToUser(string& dbLine);
@@ -43,10 +45,6 @@ class ControlInterface {
 		ControlInterface();
 
 		~ControlInterface();
-
-		string getUserDatabaseName();
-
-		void setUserDatabaseName(string name);
 
 		void clearDatabase();
 

@@ -3,6 +3,7 @@
 User::User() {
 	id = 0;
 	password = "";
+	isAdmin = false;
 	name = "";
 	phone = "";
 	email = "";
@@ -12,20 +13,28 @@ User::User() {
 	endTime = "22:00";
 }
 
-string User::getName() {
-	return name;
-}
-
-void User::setName(string value) {
-	name = value;
-}
-
 string User::getPassword() {
 	return password;
 }
 
 void User::setPassword(string value) {
 	password = value;
+}
+
+bool User::getIsAdmin() {
+	return isAdmin;
+}
+
+void User::setIsAdmin(bool value) {
+	isAdmin = value;
+}
+
+string User::getName() {
+	return name;
+}
+
+void User::setName(string value) {
+	name = value;
 }
 
 string User::getPhone() {
@@ -112,6 +121,7 @@ string User::toString() {
 	string output;
 	output = to_string(id) + "," +
 			 password + "," +
+			 to_string(isAdmin) + "," +
 			 name + "," +
 			 phone + "," +
 			 email + "," +

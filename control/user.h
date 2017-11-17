@@ -19,9 +19,14 @@
 
 class User : public Model{
 	private:
-		string name;
-
 		string password;
+
+		/**
+		 *	If the user is admin (1) or not (0).
+		 */
+		bool isAdmin;
+
+		string name;
 
 		string phone;
 
@@ -56,22 +61,32 @@ class User : public Model{
 		/**
 		 *	@return The name.
 		 */
-		string getName();
-
-		/**
-		 *	@param value The value to set the name.
-		 */
-		void setName(string value);
-
-		/**
-		 *	@return The name.
-		 */
 		string getPassword();
 
 		/**
 		 *	@param value The value to set the name.
 		 */
 		void setPassword(string value);
+
+		/**
+		 *	@return Whether the user is admin.
+		 */
+		bool getIsAdmin();
+
+		/**
+		 *	@param value The value to set the name.
+		 */
+		void setIsAdmin(bool value);
+
+		/**
+		 *	@return The name.
+		 */
+		string getName();
+
+		/**
+		 *	@param value The value to set the name.
+		 */
+		void setName(string value);
 
 		/**
 		 *	@return The phone.
