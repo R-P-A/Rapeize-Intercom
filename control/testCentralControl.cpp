@@ -1,5 +1,5 @@
 #include <iostream>
-#include "controlInterface.h"
+#include "centralControl.h"
 #include "user.h"
 
 using namespace std;
@@ -9,7 +9,7 @@ int main() {
 
 	ControlInterface* tempCI;
 	try {
-		tempCI = new ControlInterface();
+		tempCI = new CentralControl();
 	} catch (char const* e) {
 		cout << e << endl;
 	}

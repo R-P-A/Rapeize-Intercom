@@ -11,8 +11,8 @@
  *
  */
 
-#ifndef CONTROLINTERFACE
-#define CONTROLINTERFACE
+#ifndef CENTRALCONTROL
+#define CENTRALCONTROL
 
 #include <iostream>
 #include <fstream>
@@ -25,7 +25,7 @@
 
 using namespace std;
 
-class ControlInterface {
+class CentralControl {
 	private:
 		SortedList* activeUsers = new SortedList();
 		
@@ -40,9 +40,9 @@ class ControlInterface {
 		void searchUserInDatabase(string& databaseString, size_t& initialPosition, size_t& finalPosition, unsigned long int id);
 
 	public:
-		ControlInterface();
+		CentralControl();
 
-		~ControlInterface();
+		~CentralControl();
 
 		bool isDatabaseClear();
 
@@ -68,4 +68,4 @@ class ControlInterface {
 	
 };
 
-#endif	// CONTROLINTERFACE
+#endif	// CENTRALCONTROL
