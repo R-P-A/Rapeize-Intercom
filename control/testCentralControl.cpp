@@ -7,7 +7,7 @@ using namespace std;
 int main() {
 	system("rm userDatabase.csv");
 
-	ControlInterface* tempCI;
+	CentralControl* tempCI;
 	try {
 		tempCI = new CentralControl();
 	} catch (char const* e) {

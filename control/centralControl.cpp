@@ -1,4 +1,4 @@
-#include "controlInterface.h"
+#include "centralControl.h"
 
 CentralControl::CentralControl() {
 	userDatabaseFileName = "userDatabase.csv";
@@ -235,7 +235,6 @@ void CentralControl::createUser(string inputUserString, string currentUserIdPass
 			delete inputUser;
 			throw "No permission to create user";
 		}
-		cout << canModifyDatabase(inputUser->getId()) << endl;
 		if (!inputUser->getIsAdmin()) {
 			delete inputUser;
 			throw "First user isn't admin";

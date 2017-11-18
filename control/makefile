@@ -1,6 +1,6 @@
 CXX = g++
 CXXFLAGS = -Wall
-SRCS = controlInterface.cpp dateTime.cpp model.cpp myio.cpp sortedList.cpp user.cpp testControlInterface.cpp
+SRCS = centralControl.cpp dateTime.cpp model.cpp myio.cpp sortedList.cpp user.cpp testCentralControl.cpp
 OBJS = ${SRCS:.cpp=.o}
 
 all: windows
@@ -12,7 +12,7 @@ linux: $(OBJS) node.h
 	$(CXX) $(CXXFLAGS) $(OBJS) -o main.exe
 	chmod +x main.exe
 
-controlInterface: $@.cpp $@.h
+centralControl: $@.cpp $@.h
 	$(CXX) $(CXXFLAGS) $@.cpp -c
 
 dateTime: $@.cpp $@.h
@@ -30,7 +30,7 @@ sortedList: $@.cpp $@.h
 user: $@.cpp $@.h
 	$(CXX) $(CXXFLAGS) $@.cpp -c
 
-testControlInterface: $@.cpp $(OBJS)
+testCentralControl: $@.cpp $(OBJS)
 	$(CXX) $(CXXFLAGS) $@.cpp -c
 
 clean:
