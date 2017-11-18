@@ -1,5 +1,5 @@
 #include <iostream>
-#include "controlInterface.h"
+#include "centralControl.h"
 #include "user.h"
 
 using namespace std;
@@ -7,9 +7,9 @@ using namespace std;
 int main() {
 	system("rm userDatabase.csv");
 
-	ControlInterface* tempCI;
+	CentralControl* tempCI;
 	try {
-		tempCI = new ControlInterface();
+		tempCI = new CentralControl();
 	} catch (char const* e) {
 		cout << e << endl;
 	}

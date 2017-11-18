@@ -1,6 +1,6 @@
-#include "controlInterface.h"
+#include "centralControl.h"
 
-ControlInterface::ControlInterface() {
+CentralControl::CentralControl() {
 	userDatabaseFileName = "userDatabase.csv";
 	string databaseString;
 
@@ -15,11 +15,11 @@ ControlInterface::ControlInterface() {
 	}
 }
 
-ControlInterface::~ControlInterface() {
+CentralControl::~CentralControl() {
 	delete activeUsers;
 }
 
-void ControlInterface::getUserIdPass(string& inputUserIdPass, unsigned long int& inputUserId, string& inputUserPass) {
+void CentralControl::getUserIdPass(string& inputUserIdPass, unsigned long int& inputUserId, string& inputUserPass) {
 	size_t position;
 	size_t prevPosition;
 	string tempId;
@@ -40,7 +40,7 @@ void ControlInterface::getUserIdPass(string& inputUserIdPass, unsigned long int&
 	inputUserPass = inputUserIdPass.substr(prevPosition, position - prevPosition);
 }
 
-User* ControlInterface::stringToUser(string& dbLine) {
+User* CentralControl::stringToUser(string& dbLine) {
 	User* output = new User();
 	string buffer;
 	size_t prevPosition;
@@ -160,7 +160,7 @@ User* ControlInterface::stringToUser(string& dbLine) {
 	return output;
 }
 
-void ControlInterface::searchUserInDatabase(string& databaseString, size_t& initialPosition, size_t& finalPosition, unsigned long int id) {
+void CentralControl::searchUserInDatabase(string& databaseString, size_t& initialPosition, size_t& finalPosition, unsigned long int id) {
 	string idString = to_string(id);
 	initialPosition = databaseString.find(idString);
 	if (initialPosition == string::npos) {
@@ -174,7 +174,7 @@ void ControlInterface::searchUserInDatabase(string& databaseString, size_t& init
 	}
 }
 
-bool ControlInterface::isDatabaseClear() {
+bool CentralControl::isDatabaseClear() {
 	string databaseString;
 	try {
 		readFile(databaseString, userDatabaseFileName);
@@ -187,7 +187,7 @@ bool ControlInterface::isDatabaseClear() {
 	return false;
 }
 
-bool ControlInterface::isUserCheckedin(unsigned long int id) {
+bool CentralControl::isUserCheckedin(unsigned long int id) {
 	User* tempUser = (User*) activeUsers->search(id);
 	if (tempUser == NULL) {
 		return false;
@@ -195,7 +195,7 @@ bool ControlInterface::isUserCheckedin(unsigned long int id) {
 	return true;
 }
 
-bool ControlInterface::canModifyDatabase(unsigned long int id) {
+bool CentralControl::canModifyDatabase(unsigned long int id) {
 	User* tempUser = (User*) activeUsers->search(id);
 	if (tempUser == NULL) {
 		return false;
@@ -203,7 +203,7 @@ bool ControlInterface::canModifyDatabase(unsigned long int id) {
 	return tempUser->getIsAdmin();
 }
 
-void ControlInterface::createUser(string inputUserString, string currentUserIdPass) {
+void CentralControl::createUser(string inputUserString, string currentUserIdPass) {
 	User* inputUser = new User();
 	string databaseString;
 	unsigned long int currentUserId;
@@ -235,7 +235,6 @@ void ControlInterface::createUser(string inputUserString, string currentUserIdPa
 			delete inputUser;
 			throw "No permission to create user";
 		}
-		cout << canModifyDatabase(inputUser->getId()) << endl;
 		if (!inputUser->getIsAdmin()) {
 			delete inputUser;
 			throw "First user isn't admin";
@@ -259,7 +258,7 @@ void ControlInterface::createUser(string inputUserString, string currentUserIdPa
 	throw "User already exists";
 }
 
-string ControlInterface::readUser(unsigned long int id) {
+string CentralControl::readUser(unsigned long int id) {
 	string databaseString;
 	string userString;
 
@@ -280,7 +279,7 @@ string ControlInterface::readUser(unsigned long int id) {
 	return userString;
 }
 
-void ControlInterface::updateUser(string inputUserString, string currentUserIdPass) {
+void CentralControl::updateUser(string inputUserString, string currentUserIdPass) {
 	string databaseString;
 	User* inputUser = new User();
 	unsigned long int currentUserId;
@@ -337,7 +336,7 @@ void ControlInterface::updateUser(string inputUserString, string currentUserIdPa
 	}
 }
 
-void ControlInterface::deleteUser(unsigned long int id, string currentUserIdPass) {
+void CentralControl::deleteUser(unsigned long int id, string currentUserIdPass) {
 	string databaseString;
 	unsigned long int currentUserId;
 	string currentUserPass;
@@ -379,7 +378,7 @@ void ControlInterface::deleteUser(unsigned long int id, string currentUserIdPass
 	}
 }
 
-void ControlInterface::checkin(string currentUserIdPass) {
+void CentralControl::checkin(string currentUserIdPass) {
 	string databaseUser;
 	unsigned long int currentUserId, dbUserId;
 	string currentUserPass, dbUserPass;
@@ -422,7 +421,7 @@ void ControlInterface::checkin(string currentUserIdPass) {
 	}	
 }
 
-void ControlInterface::checkout(string currentUserIdPass) {
+void CentralControl::checkout(string currentUserIdPass) {
 	unsigned long int currentUserId;
 
 	currentUserId = openDoor(currentUserIdPass);
@@ -434,7 +433,7 @@ void ControlInterface::checkout(string currentUserIdPass) {
 	}	
 }
 
-unsigned long int ControlInterface::openDoor(string currentUserIdPass) {
+unsigned long int CentralControl::openDoor(string currentUserIdPass) {
 	unsigned long int currentUserId;
 	string currentUserPass;
 
@@ -453,7 +452,7 @@ unsigned long int ControlInterface::openDoor(string currentUserIdPass) {
 	return currentUserId;
 }
 
-string ControlInterface::getActiveUsers() {
+string CentralControl::getActiveUsers() {
 	User* currentUser = NULL;
 	size_t initialPosition = 0;
 	size_t finalPosition;
