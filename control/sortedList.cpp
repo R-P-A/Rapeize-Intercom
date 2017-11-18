@@ -116,7 +116,7 @@ void SortedList::remove(unsigned long int id) {
 Node<Model*>* SortedList::searchNode(unsigned long int id) {
 	Node<Model*>* currentNode = head;
 	while (currentNode != NULL) {
-		int currentId = currentNode->getData()->getId();
+		unsigned long int currentId = currentNode->getData()->getId();
 		if (currentId == id) {
 			return currentNode;
 		}
@@ -131,7 +131,7 @@ Node<Model*>* SortedList::searchNode(unsigned long int id) {
 string SortedList::listAll() {
 	string result = "";
 	Node<Model*>* currentNode = head;
-	int currentId;
+	unsigned long int currentId;
 	while (currentNode != NULL) {
 		currentId = currentNode->getData()->getId();
 		result.append(to_string(currentId) + "\n");

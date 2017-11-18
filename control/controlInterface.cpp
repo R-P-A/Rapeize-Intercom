@@ -185,7 +185,14 @@ bool ControlInterface::isDatabaseClear() {
 		return true;
 	}
 	return false;
+}
 
+bool ControlInterface::isUserCheckedin(unsigned long int id) {
+	User* tempUser = (User*) activeUsers->search(id);
+	if (tempUser == NULL) {
+		return false;
+	}
+	return true;
 }
 
 bool ControlInterface::canModifyDatabase(unsigned long int id) {
@@ -196,9 +203,17 @@ bool ControlInterface::canModifyDatabase(unsigned long int id) {
 	return tempUser->getIsAdmin();
 }
 
-void ControlInterface::createUser(string inputUserString) {
+void ControlInterface::createUser(string inputUserString, string currentUserIdPass) {
 	User* inputUser = new User();
 	string databaseString;
+	unsigned long int currentUserId;
+	string currentUserPass;
+
+	try {
+		getUserIdPass(currentUserIdPass, currentUserId, currentUserPass);
+	} catch (const char* e) {
+		throw e;
+	}
 
 	try {
 		inputUser = stringToUser(inputUserString);
@@ -215,10 +230,15 @@ void ControlInterface::createUser(string inputUserString) {
 	}
 
 	// If the user isn't admin logged-in and the file is not empty, throw exception
-	if (!canModifyDatabase(inputUser->getId())) {
+	if (!canModifyDatabase(currentUserId)) {
 		if (!(databaseString == "" || databaseString == "\n")) {
 			delete inputUser;
 			throw "No permission to create user";
+		}
+		cout << canModifyDatabase(inputUser->getId()) << endl;
+		if (!inputUser->getIsAdmin()) {
+			delete inputUser;
+			throw "First user isn't admin";
 		}
 	}
 
@@ -242,15 +262,11 @@ void ControlInterface::createUser(string inputUserString) {
 string ControlInterface::readUser(unsigned long int id) {
 	string databaseString;
 	string userString;
+
 	try {
 		readFile(databaseString, userDatabaseFileName);
 	} catch (char const* e) {
 		throw e;
-	}
-
-	// If the user isn't admin logged-in, throw exception
-	if (!canModifyDatabase(id)) {
-		throw "No permission to create user";
 	}
 
 	size_t initialPosition, finalPosition;
@@ -264,9 +280,17 @@ string ControlInterface::readUser(unsigned long int id) {
 	return userString;
 }
 
-void ControlInterface::updateUser(string inputUserString) {
+void ControlInterface::updateUser(string inputUserString, string currentUserIdPass) {
 	string databaseString;
 	User* inputUser = new User();
+	unsigned long int currentUserId;
+	string currentUserPass;
+
+	try {
+		getUserIdPass(currentUserIdPass, currentUserId, currentUserPass);
+	} catch (const char* e) {
+		throw e;
+	}
 
 	try {
 		inputUser = stringToUser(inputUserString);
@@ -283,9 +307,9 @@ void ControlInterface::updateUser(string inputUserString) {
 	}
 
 	// If the user isn't admin logged-in, throw exception
-	if (!canModifyDatabase(inputUser->getId())) {
+	if (!(canModifyDatabase(currentUserId) || (currentUserId == inputUser->getId()))) {
 		delete inputUser;
-		throw "No permission to create user";
+		throw "No permission to update user";
 	}
 
 	size_t initialPosition, finalPosition;
@@ -305,14 +329,29 @@ void ControlInterface::updateUser(string inputUserString) {
 		throw e;
 	}
 
-	User* activeUser = (User*) activeUsers->search(inputUser->getId());
-	if (activeUser != NULL) {
-		activeUsers->update(inputUser);
+	if (currentUserId == inputUser->getId()) {
+		User* activeUser = (User*) activeUsers->search(inputUser->getId());
+		if (activeUser != NULL) {
+			activeUsers->update(inputUser);
+		}
 	}
 }
 
-void ControlInterface::deleteUser(unsigned long int id) {
+void ControlInterface::deleteUser(unsigned long int id, string currentUserIdPass) {
 	string databaseString;
+	unsigned long int currentUserId;
+	string currentUserPass;
+
+	try {
+		getUserIdPass(currentUserIdPass, currentUserId, currentUserPass);
+	} catch (const char* e) {
+		throw e;
+	}
+
+	if (id == currentUserId) {
+		throw "Can't delete current user";
+	}
+
 	try {
 		readFile(databaseString, userDatabaseFileName);
 	} catch (char const* e) {
@@ -320,8 +359,8 @@ void ControlInterface::deleteUser(unsigned long int id) {
 	}
 
 	// If the user isn't admin logged-in, throw exception
-	if (!canModifyDatabase(id)) {
-		throw "No permission to create user";
+	if (!canModifyDatabase(currentUserId)) {
+		throw "No permission to delete user";
 	}
 
 	size_t initialPosition, finalPosition;
@@ -340,19 +379,19 @@ void ControlInterface::deleteUser(unsigned long int id) {
 	}
 }
 
-void ControlInterface::checkin(string inputUserIdPass) {
+void ControlInterface::checkin(string currentUserIdPass) {
 	string databaseUser;
-	unsigned long int inputUserId, dbUserId;
-	string inputUserPass, dbUserPass;
+	unsigned long int currentUserId, dbUserId;
+	string currentUserPass, dbUserPass;
 
 	try {
-		getUserIdPass(inputUserIdPass, inputUserId, inputUserPass);
+		getUserIdPass(currentUserIdPass, currentUserId, currentUserPass);
 	} catch (const char* e) {
 		throw e;
 	}
 
 	try {
-		databaseUser = readUser(inputUserId);
+		databaseUser = readUser(currentUserId);
 	} catch (const char* e) {
 		throw e;
 	}
@@ -363,7 +402,7 @@ void ControlInterface::checkin(string inputUserIdPass) {
 		throw e;
 	}
 
-	if (dbUserPass == inputUserPass) {
+	if (dbUserPass == currentUserPass) {
 		User* checkinUser = new User();
 		try {
 			checkinUser = stringToUser(databaseUser);
@@ -383,14 +422,64 @@ void ControlInterface::checkin(string inputUserIdPass) {
 	}	
 }
 
-void ControlInterface::checkout(string inputUserIdPass) {
-	
+void ControlInterface::checkout(string currentUserIdPass) {
+	unsigned long int currentUserId;
+
+	currentUserId = openDoor(currentUserIdPass);
+
+	try {
+		activeUsers->remove(currentUserId);
+	} catch (const char* e) {
+		throw e;
+	}	
 }
 
-void ControlInterface::openDoor(string inputUserIdPass) {
-	
+unsigned long int ControlInterface::openDoor(string currentUserIdPass) {
+	unsigned long int currentUserId;
+	string currentUserPass;
+
+	try {
+		getUserIdPass(currentUserIdPass, currentUserId, currentUserPass);
+	} catch (const char* e) {
+		throw e;
+	}
+
+	if (!isUserCheckedin(currentUserId)) {
+		throw "User not checked-in";
+	}
+
+	system("echo Door opened!\n");
+
+	return currentUserId;
 }
 
 string ControlInterface::getActiveUsers() {
-	
+	User* currentUser = NULL;
+	size_t initialPosition = 0;
+	size_t finalPosition;
+	string allActiveUsers = "";
+	unsigned long int currentUserId;
+
+	string activeUsersId = activeUsers->listAll();
+	if (activeUsersId.empty()) {
+		return allActiveUsers;
+	}
+
+	while (true) {
+		finalPosition = activeUsersId.find('\n', initialPosition);
+		if (finalPosition == string::npos) {
+			return allActiveUsers;
+		}
+		try {
+			currentUserId = stoul(activeUsersId.substr(initialPosition, (finalPosition - initialPosition)));
+		} catch (const char* e) {
+			throw "Conversion from string to unsigned long int not valid";
+		}
+		currentUser = (User*) activeUsers->search(currentUserId);
+		if (currentUser == NULL) {
+			throw "Active Users list corrupted";
+		}
+		allActiveUsers += currentUser->toString();
+		initialPosition = finalPosition + 1;
+	}
 }

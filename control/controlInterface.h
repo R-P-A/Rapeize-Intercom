@@ -46,21 +46,23 @@ class ControlInterface {
 
 		bool isDatabaseClear();
 
+		bool isUserCheckedin(unsigned long int id);
+
 		bool canModifyDatabase(unsigned long int id);
 
-		void createUser(string inputUserString);
+		void createUser(string inputUserString, string currentUserIdPass);
 
 		string readUser(unsigned long int id);
 
-		void updateUser(string inputUserString);
+		void updateUser(string inputUserString, string currentUserIdPass);
 
-		void deleteUser(unsigned long int id);
+		void deleteUser(unsigned long int id, string currentUserIdPass);
 
-		void checkin(string inputUserIdPass);
+		void checkin(string currentUserIdPass);
 
-		void checkout(string inputUserIdPass);
+		void checkout(string currentUserIdPass);
 
-		void openDoor(string inputUserIdPass);
+		unsigned long int openDoor(string currentUserIdPass);
 
 		string getActiveUsers();
 	
