@@ -33,34 +33,38 @@ class ControlInterface {
 
 		string userDatabaseFileName;
 
-		User* dbStringLineToUser(string& dbLine);
+		void getUserIdPass(string& inputUserIdPass, unsigned long int& inputUserId, string& inputUserPass);
+
+		User* stringToUser(string& dbLine);
+
+		void searchUserInDatabase(string& databaseString, size_t& initialPosition, size_t& finalPosition, unsigned long int id);
 
 	public:
 		ControlInterface();
 
 		~ControlInterface();
 
-		string getUserDatabaseName();
+		bool isDatabaseClear();
 
-		void setUserDatabaseName(string name);
+		bool isUserCheckedin(unsigned long int id);
 
-		void createUser(User* inputUser);
+		bool canModifyDatabase(unsigned long int id);
 
-		void removeUser(unsigned long int id);
+		void createUser(string inputUserString, string currentUserIdPass);
 
-		void editUser(User* inputUser);
+		string readUser(unsigned long int id);
 
-		User* getUser(unsigned long int id);
+		void updateUser(string inputUserString, string currentUserIdPass);
 
-		User* getActiveUser(unsigned long int id);
+		void deleteUser(unsigned long int id, string currentUserIdPass);
 
-		SortedList* getActiveUsers();
+		void checkin(string currentUserIdPass);
 
-		void checkin(User* currentUser);
+		void checkout(string currentUserIdPass);
 
-		void checkout(User* currentUser);
+		unsigned long int openDoor(string currentUserIdPass);
 
-		void openDoor(User* currentUser);
+		string getActiveUsers();
 	
 };
 

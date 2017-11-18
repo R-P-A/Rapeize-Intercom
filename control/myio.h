@@ -18,12 +18,39 @@
 using namespace std;
 
 /**
+ *	Converts a string to bool.
+ *	@param s String passed as reference to be checked.
+ *	@return Whether is "1" or "0".
+ */
+bool to_bool(std::string const& s);
+
+/**
  *	Function used internally to get a string in the standard input.
- *	@param input String passed as reference to be changed
+ *	@param input String passed as reference to be changed.
  *	@param std_input Define the standard input (cin, file)
  *	@return The string read.
  */
 void getStringLine(string& input, istream& stdInput = cin);
+
+/**
+ *	Read the whole content of a file and saves on a string. If it doesn't exist, creates a new file with "".
+ *	@param output The string to save the file read.
+ *	@throw const char* "Couldn't open the file".
+ */
+void readFile(string& output, string fileName);
+/**
+ *	Clear a file and write the content given by a string.
+ *	@param input The string to write in the file.
+ *	@throw const char* "Couldn't open the file".
+ */
+void writeFileClear(string& input, string fileName);
+
+/**
+ *	Write the content given by a string in a file appending to the end.
+ *	@param input The string to write in the file.
+ *	@throw const char* "Couldn't open the file".
+ */
+void writeFileAppend(string& input, string fileName);
 
 /**
  *	Read a signed number on the standard input.
@@ -130,25 +157,5 @@ void readString(string& output);
  */
 
 void readChar(char& output);
-
-/**
- *	Read the whole content of a file and saves on a string.
- *	@param output The string to save the file read.
- *	@throw const char* "Couldn't open the file".
- */
-void readFile(string& output, string fileName);
-/**
- *	Clear a file and write the content given by a string.
- *	@param input The string to write in the file.
- *	@throw const char* "Couldn't open the file".
- */
-void writeFileClear(string& input, string fileName);
-
-/**
- *	Write the content given by a string in a file appending to the end.
- *	@param input The string to write in the file.
- *	@throw const char* "Couldn't open the file".
- */
-void writeFileAppend(string& input, string fileName);
 
 #endif	// MYIO

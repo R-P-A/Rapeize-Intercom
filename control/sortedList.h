@@ -33,7 +33,7 @@ class SortedList {
 		 *	Find a node in the list and returns the pointer to it.
 		 *	@param newModel The id of the node to be found.
 		 */
-		Node<Model*>* findNode(unsigned long int id);
+		Node<Model*>* searchNode(unsigned long int id);
 
 	public:
 		SortedList();
@@ -49,25 +49,25 @@ class SortedList {
 		void insert(Model* newModel);
 
 		/**
+		 *	Read a Model in the list with this id and returns it.
+		 *	@param id The id of the Model to be returned.
+		 *	@return	The pointer to the Model desired. NULL if the Model don't exist.
+		 */
+		Model* search(unsigned long int id);
+
+		/**
+		 *	Update a Model in the list with this id.
+		 *	@param modifiedModel The new Model that substitute the data in the old Model which shares the same id.
+		 *	@throw const char* "Id not found".
+		 */
+		void update(Model* modifiedModel);
+
+		/**
 		 *	Remove a Model in the list with this id.
 		 *	@param id The id of the Model to be removed.
 		 *	@throw const char* "Id not found".
 		 */
 		void remove(unsigned long int id);
-
-		/**
-		 *	Edit a Model in the list with this id.
-		 *	@param modifiedModel The new Model that substitute the data in the old Model which shares the same id.
-		 *	@throw const char* "Id not found".
-		 */
-		void edit(Model* modifiedModel);
-
-		/**
-		 *	Find a Model in the list with this id and returns it.
-		 *	@param id The id of the Model to be returned.
-		 *	@return	The pointer to the Model desired. NULL if the Model don't exist.
-		 */
-		Model* find(unsigned long int id);
 
 		/**
 		 *	Print in a string all the ids of the Models in the list separated by \n.

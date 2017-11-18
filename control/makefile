@@ -34,4 +34,4 @@ testControlInterface: $@.cpp $(OBJS)
 	$(CXX) $(CXXFLAGS) $@.cpp -c
 
 clean:
-	rm -rf *.o *.exe main
+	rm -rf *.o *.exe *.out main

@@ -3,21 +3,14 @@
 User::User() {
 	id = 0;
 	password = "";
+	isAdmin = false;
 	name = "";
 	phone = "";
 	email = "";
-	beginWeekDay = "";
-	endWeekDay = "";
-	beginTime = "";
-	endTime = "";
-}
-
-string User::getName() {
-	return name;
-}
-
-void User::setName(string value) {
-	name = value;
+	beginWeekDay = "Monday";
+	endWeekDay = "Friday";
+	beginTime = "06:00";
+	endTime = "22:00";
 }
 
 string User::getPassword() {
@@ -26,6 +19,22 @@ string User::getPassword() {
 
 void User::setPassword(string value) {
 	password = value;
+}
+
+bool User::getIsAdmin() {
+	return isAdmin;
+}
+
+void User::setIsAdmin(bool value) {
+	isAdmin = value;
+}
+
+string User::getName() {
+	return name;
+}
+
+void User::setName(string value) {
+	name = value;
 }
 
 string User::getPhone() {
@@ -51,13 +60,13 @@ string User::getBeginWeekDay() {
 void User::setBeginWeekDay(string value) {
 	value[0] = toupper(value[0]);
 	if (value == "Sunday" || value == "Monday" ||
-		value == "Thursday" || value == "Wednesday" ||
+		value == "Tuesday" || value == "Wednesday" ||
 		value == "Thirsday" || value == "Friday" ||
-		value == "Friday") {
+		value == "Saturday") {
 		beginWeekDay = value;
 		return;
 	}
-	throw "Invalid input";
+	throw "Invalid input format";
 }
 
 string User::getEndWeekDay() {
@@ -67,9 +76,9 @@ string User::getEndWeekDay() {
 void User::setEndWeekDay(string value) {
 	value[0] = toupper(value[0]);
 	if (value == "Sunday" || value == "Monday" ||
-		value == "Thursday" || value == "Wednesday" ||
+		value == "Tuesday" || value == "Wednesday" ||
 		value == "Thirsday" || value == "Friday" ||
-		value == "Friday") {
+		value == "Saturday") {
 		endWeekDay = value;
 		return;
 	}
@@ -106,4 +115,19 @@ void User::setEndTime(string value) {
 		throw "Invalid input format";
 	}
 	endTime = value;
+}
+
+string User::toString() {
+	string output;
+	output = to_string(id) + "," +
+			 password + "," +
+			 to_string(isAdmin) + "," +
+			 name + "," +
+			 phone + "," +
+			 email + "," +
+			 beginWeekDay + "," +
+			 endWeekDay + "," +
+			 beginTime + "," +
+			 endTime + "\n";
+	return output;
 }
