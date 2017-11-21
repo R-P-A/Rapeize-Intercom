@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-#include <thread>
+#include <unistd.h>
 #include "serverSocket.h"
 #include "socketException.h"
 
@@ -11,7 +11,8 @@ void callResponse(ServerSocket newSock) {
 		string data;
 		string temp = "Hello World!";
 		newSock >> data;
-		cout << data << endl;
+		sleep(5);
+		cout << data << endl << endl;
 		newSock << temp;
 	} catch (SocketException& e) {
 		cout << "Exception was caught: " << e.description() << "\nExiting.\n";
@@ -29,12 +30,8 @@ int main ()
 			ServerSocket newSock;
 			server.accept(newSock);
 			cout << "Connected!\n";
-
-
-			cout << "Starting Thread!\n";
 			// To Do
 			callResponse(newSock);
-			cout << "Finished Thread!\n\n";
 		}
 	} catch (SocketException& e) {
 		cout << "Exception was caught: " << e.description() << "\nExiting.\n";
