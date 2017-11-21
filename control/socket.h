@@ -1,3 +1,16 @@
+/** 
+ *	@author  Rafael Pintar Alevato
+ *	@date    20/11/2017
+ *	@version 1.0 
+ *	
+ *	@brief Class that manages any type of socket.
+ *
+ *	@section DESCRIPTION
+ *	
+ *	Abstraction for C++ from the C sockets.
+ *
+ */
+
 #ifndef SOCKET
 #define SOCKET
 
@@ -28,16 +41,16 @@ class Socket {
 		Socket();
 		virtual ~Socket();
 
-		// Server initialization
+		/** Server initialization */
 		bool create();
 		bool bind (const int port);
 		bool listen() const;
 		bool accept (Socket&) const;
 
-		// Client initialization
+		/** Client initialization */
 		bool connect (const string host, const int port);
 
-		// Data Transimission
+		/** Data Transimission */
 		bool send (const string) const;
 		int recv (string&) const;
 

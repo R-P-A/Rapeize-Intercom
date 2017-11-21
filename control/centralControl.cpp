@@ -4,9 +4,6 @@ CentralControl::CentralControl() {
 	userDatabaseFileName = "userDatabase.csv";
 	string databaseString;
 
-	// Turn on webserver
-	// ...
-
 	// Initialize database
 	try {
 		readFile(databaseString, userDatabaseFileName);
@@ -41,7 +38,7 @@ void CentralControl::getUserIdPass(string& inputUserIdPass, unsigned long int& i
 }
 
 User* CentralControl::stringToUser(string& dbLine) {
-	User* output = new User();
+	User* output;
 	string buffer;
 	size_t prevPosition;
 	size_t position;
