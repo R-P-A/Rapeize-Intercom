@@ -1,12 +1,11 @@
 #include "serverSocket.h"
 
-ServerSocket::ServerSocket (int port)
-{
+ServerSocket::ServerSocket (int port) {
 	if (!Socket::create()) {
 		throw SocketException("Could not create server socket.");
 	}
 
-	if (!Socket::bind (port)) {
+	if (!Socket::bind(port)) {
 		throw SocketException("Could not bind to port.");
 	}
 
@@ -18,7 +17,7 @@ ServerSocket::ServerSocket (int port)
 
 ServerSocket::~ServerSocket() {}
 
-const ServerSocket& ServerSocket::operator << (const std::string& s) const {
+const ServerSocket& ServerSocket::operator << (const string& s) const {
 	if (!Socket::send(s)) {
 		throw SocketException("Could not write to socket.");
 	}
@@ -26,7 +25,7 @@ const ServerSocket& ServerSocket::operator << (const std::string& s) const {
 }
 
 
-const ServerSocket& ServerSocket::operator >> (std::string& s) const {
+const ServerSocket& ServerSocket::operator >> (string& s) const {
 	if (!Socket::recv(s)) {
 		throw SocketException("Could not read from socket.");
 	}

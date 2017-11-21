@@ -20,6 +20,10 @@ const int MAXCONNECTIONS = 5;
 const int MAXRECV = 500;
 
 class Socket {
+	private:
+		int mSock;
+		sockaddr_in mAddr;
+		
 	public:
 		Socket();
 		virtual ~Socket();
@@ -31,22 +35,17 @@ class Socket {
 		bool accept (Socket&) const;
 
 		// Client initialization
-		bool connect (const std::string host, const int port);
+		bool connect (const string host, const int port);
 
 		// Data Transimission
-		bool send (const std::string) const;
-		int recv (std::string&) const;
+		bool send (const string) const;
+		int recv (string&) const;
 
 		void set_non_blocking (const bool);
 
 		bool is_valid() const {
-			return m_sock != -1;
+			return mSock != -1;
 		}
-
-	private:
-		int m_sock;
-		sockaddr_in m_addr;
-
 
 };
 

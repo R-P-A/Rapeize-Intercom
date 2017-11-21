@@ -9,7 +9,7 @@ using namespace std;
 class ServerSocket : private Socket {
 	public:
 		ServerSocket(int port);
-		ServerSocket(){};
+		ServerSocket() {};
 		virtual ~ServerSocket();
 
 		const ServerSocket& operator << (const string&) const;
