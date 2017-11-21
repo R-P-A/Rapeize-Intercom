@@ -1,24 +1,24 @@
 CXX = g++
 CXXFLAGS = -Wall
-SRCS = socket.cpp serverSocket.cpp mainServer.cpp
+SRCS = socket.cpp clientSocket.cpp testClient.cpp
 OBJS = ${SRCS:.cpp=.o}
 
 all: windows
 
 windows: $(OBJS) socketException.h
-	$(CXX) $(CXXFLAGS) $(OBJS) -o mainServer.exe
+	$(CXX) $(CXXFLAGS) $(OBJS) -o testClient.exe
 
 linux: $(OBJS) socketException.h
-	$(CXX) $(CXXFLAGS) $(OBJS) -o mainServer.exe
-	chmod +x mainServer.exe
+	$(CXX) $(CXXFLAGS) $(OBJS) -o testClient.exe
+	chmod +x testClient.exe
 
 socket: $@.cpp $@.h
 	$(CXX) $(CXXFLAGS) $@.cpp -c
 
-serverSocket: $@.cpp $@.h
+clientSocket: $@.cpp $@.h
 	$(CXX) $(CXXFLAGS) $@.cpp -c
 
-mainServer: $@.cpp $(OBJS)
+testClient: $@.cpp $(OBJS)
 	$(CXX) $(CXXFLAGS) $@.cpp -c
 
 clean:

@@ -34,4 +34,4 @@ testCentralControl: $@.cpp $(OBJS)
 	$(CXX) $(CXXFLAGS) $@.cpp -c
 
 clean:
-	rm -rf *.o *.exe *.out main
+	rm -rf *.o *.exe *.out
