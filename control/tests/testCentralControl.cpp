@@ -21,7 +21,7 @@ int main() {
 
 	cout << endl << "Try to instantiate one user with wrong inputs in beginWeekDay, endWeekDay, beginTime, endTime, one at a time." << endl;
 	try {
-		tempString = "14204800,pass,1,John,1010,john@doe.com,aonday,Friday,08:30,23:30\n";
+		tempString = "14204800,pass,1,John,1010,john@doe.com,aonday,Friday,16:30,23:30\n";
 		currentUserIdPass = "14204800,pass";
 		tempCI->createUser(tempString, currentUserIdPass);
 		cout << "Success!!!" << endl;
@@ -29,21 +29,21 @@ int main() {
 		cout << e << endl;
 	}
 	try {
-		tempString = "14204800,pass,1,John,1010,john@doe.com,Monday,Frday,08:30,23:30\n";
+		tempString = "14204800,pass,1,John,1010,john@doe.com,Tuesday,Frday,16:30,23:30\n";
 		tempCI->createUser(tempString, currentUserIdPass);
 		cout << "Success!!!" << endl;
 	} catch (char const* e) {
 		cout << e << endl;
 	}
 	try {
-		tempString = "14204800,pass,1,John,1010,john@doe.com,Monday,Friday,081:30,23:30\n";
+		tempString = "14204800,pass,1,John,1010,john@doe.com,Tuesday,Friday,161:30,23:30\n";
 		tempCI->createUser(tempString, currentUserIdPass);
 		cout << "Success!!!" << endl;
 	} catch (char const* e) {
 		cout << e << endl;
 	}
 	try {
-		tempString = "14204800,pass,1,John,1010,john@doe.com,Monday,Friday,08:30,24:30\n";
+		tempString = "14204800,pass,1,John,1010,john@doe.com,Tuesday,Friday,16:30,24:30\n";
 		tempCI->createUser(tempString, currentUserIdPass);
 		cout << "Success!!!" << endl;
 	} catch (char const* e) {
@@ -61,7 +61,7 @@ int main() {
 
 	cout << endl << "Try to create First user without admin permission. This user must be an admin and must be created for other changes in database." << endl;
 	try {
-		tempString = "14204800,pass,0,John,1010,john@doe.com,Monday,Friday,08:30,23:30\n";
+		tempString = "14204800,pass,0,John,1010,john@doe.com,Tuesday,Friday,16:30,23:30\n";
 		tempCI->createUser(tempString, currentUserIdPass);
 		cout << "Success!!!" << endl;
 	} catch (char const* e) {
@@ -70,7 +70,7 @@ int main() {
 
 	cout << endl << "Create First user successfully." << endl;
 	try {
-		tempString = "14204800,pass,1,John,1010,john@doe.com,Monday,Friday,08:30,23:30\n";
+		tempString = "14204800,pass,1,John,1010,john@doe.com,Tuesday,Friday,16:30,23:30\n";
 		tempCI->createUser(tempString, currentUserIdPass);
 		cout << "Success!!!" << endl;
 	} catch (char const* e) {
@@ -94,11 +94,11 @@ int main() {
 
 	cout << endl << "Create other 3 users successfully" << endl;
 	try {
-		tempString = "1380,pass,0,John,1010,john@doe.com,Monday,Friday,08:30,23:30\n";
+		tempString = "1380,pass,0,John,1010,john@doe.com,Tuesday,Friday,16:30,23:30\n";
 		tempCI->createUser(tempString, currentUserIdPass);
-		tempString = "487,pass,1,John,1010,john@doe.com,Monday,Friday,08:30,23:30\n";
+		tempString = "487,pass,1,John,1010,john@doe.com,Tuesday,Friday,16:30,23:30\n";
 		tempCI->createUser(tempString, currentUserIdPass);
-		tempString = "856489,pass,0,John,1010,john@doe.com,Monday,Friday,08:30,23:30\n";
+		tempString = "856489,pass,0,John,1010,john@doe.com,Tuesday,Friday,16:30,23:30\n";
 		tempCI->createUser(tempString, currentUserIdPass);
 		cout << "Success!!!" << endl;
 	} catch (char const* e) {
@@ -115,7 +115,7 @@ int main() {
 	cout << endl << "Checkin with non admin user." << endl;
 	try {
 		currentUserIdPass = "1380,pass";
-		tempString = "1380,pass,0,John,1010,john@doe.com,Monday,Friday,08:30,23:30\n";
+		tempString = "1380,pass,0,John,1010,john@doe.com,Tuesday,Friday,16:30,23:30\n";
 		tempCI->checkin(currentUserIdPass);
 		cout << "Success!!!" << endl;
 	} catch (char const* e) {
@@ -124,7 +124,7 @@ int main() {
 
 	cout << endl << "Try to create one user without admin permission." << endl;
 	try {
-		tempString = "13800,pass,0,John,1010,john@doe.com,Monday,Friday,08:30,23:30\n";
+		tempString = "13800,pass,0,John,1010,john@doe.com,Tuesday,Friday,16:30,23:30\n";
 		tempCI->createUser(tempString, currentUserIdPass);
 		cout << "Success!!!" << endl;
 	} catch (char const* e) {
@@ -134,7 +134,7 @@ int main() {
 	cout << endl << "Try to create one user that already exists" << endl;
 	try {
 		currentUserIdPass = "14204800,pass";
-		tempString = "856489,pass,0,John,1010,john@doe.com,Monday,Friday,08:30,23:30\n";
+		tempString = "856489,pass,0,John,1010,john@doe.com,Tuesday,Friday,16:30,23:30\n";
 		tempCI->createUser(tempString, currentUserIdPass);
 		cout << "Success!!!" << endl;
 	} catch (char const* e) {
