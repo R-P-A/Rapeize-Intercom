@@ -7,7 +7,7 @@ CentralControl::CentralControl() {
 	// Initialize database
 	try {
 		readFile(databaseString, userDatabaseFileName);
-	} catch (char const* e) {
+	} catch (const char* e) {
 		throw e;
 	}
 }
@@ -38,7 +38,7 @@ void CentralControl::getUserIdPass(string& inputUserIdPass, unsigned long int& i
 }
 
 User* CentralControl::stringToUser(string& dbLine) {
-	User* output;
+	User* output = new User();
 	string buffer;
 	size_t prevPosition;
 	size_t position;
@@ -115,7 +115,7 @@ User* CentralControl::stringToUser(string& dbLine) {
 	buffer = dbLine.substr(prevPosition, position - prevPosition);
 	try {
 		output->setBeginWeekDay(buffer);
-	} catch (char const* e) {
+	} catch (const char* e) {
 		throw e;
 	}
 
@@ -128,7 +128,7 @@ User* CentralControl::stringToUser(string& dbLine) {
 	buffer = dbLine.substr(prevPosition, position - prevPosition);
 	try {
 		output->setEndWeekDay(buffer);
-	} catch (char const* e) {
+	} catch (const char* e) {
 		throw e;
 	}
 
@@ -141,7 +141,7 @@ User* CentralControl::stringToUser(string& dbLine) {
 	buffer = dbLine.substr(prevPosition, position - prevPosition);
 	try {
 		output->setBeginTime(buffer);
-	} catch (char const* e) {
+	} catch (const char* e) {
 		throw e;
 	}
 
@@ -150,7 +150,7 @@ User* CentralControl::stringToUser(string& dbLine) {
 	buffer = dbLine.substr(prevPosition, position - prevPosition);
 	try {
 		output->setEndTime(buffer);
-	} catch (char const* e) {
+	} catch (const char* e) {
 		throw e;
 	}
 
@@ -175,7 +175,7 @@ bool CentralControl::isDatabaseClear() {
 	string databaseString;
 	try {
 		readFile(databaseString, userDatabaseFileName);
-	} catch (char const* e) {
+	} catch (const char* e) {
 		throw e;
 	}
 	if (databaseString == "" || databaseString == "\n") {
@@ -201,7 +201,7 @@ bool CentralControl::canModifyDatabase(unsigned long int id) {
 }
 
 void CentralControl::createUser(string inputUserString, string currentUserIdPass) {
-	User* inputUser = new User();
+	User* inputUser = NULL;
 	string databaseString;
 	unsigned long int currentUserId;
 	string currentUserPass;
@@ -214,14 +214,14 @@ void CentralControl::createUser(string inputUserString, string currentUserIdPass
 
 	try {
 		inputUser = stringToUser(inputUserString);
-	} catch (char const* e) {
+	} catch (const char* e) {
 		delete inputUser;
 		throw e;
 	}
 
 	try {
 		readFile(databaseString, userDatabaseFileName);
-	} catch (char const* e) {
+	} catch (const char* e) {
 		delete inputUser;
 		throw e;
 	}
@@ -241,10 +241,10 @@ void CentralControl::createUser(string inputUserString, string currentUserIdPass
 	size_t initialPosition, finalPosition;
 	try {
 		searchUserInDatabase(databaseString, initialPosition, finalPosition, inputUser->getId());
-	} catch (char const* e) {
+	} catch (const char* e) {
 		try {
 			writeFileAppend(inputUserString, userDatabaseFileName);
-		} catch (char const* e) {
+		} catch (const char* e) {
 			delete inputUser;
 			throw e;
 		}
@@ -261,14 +261,14 @@ string CentralControl::readUser(unsigned long int id) {
 
 	try {
 		readFile(databaseString, userDatabaseFileName);
-	} catch (char const* e) {
+	} catch (const char* e) {
 		throw e;
 	}
 
 	size_t initialPosition, finalPosition;
 	try {
 		searchUserInDatabase(databaseString, initialPosition, finalPosition, id);
-	} catch (char const* e) {
+	} catch (const char* e) {
 		throw e;
 	}
 
@@ -278,7 +278,7 @@ string CentralControl::readUser(unsigned long int id) {
 
 void CentralControl::updateUser(string inputUserString, string currentUserIdPass) {
 	string databaseString;
-	User* inputUser = new User();
+	User* inputUser = NULL;
 	unsigned long int currentUserId;
 	string currentUserPass;
 
@@ -290,14 +290,14 @@ void CentralControl::updateUser(string inputUserString, string currentUserIdPass
 
 	try {
 		inputUser = stringToUser(inputUserString);
-	} catch (char const* e) {
+	} catch (const char* e) {
 		delete inputUser;
 		throw e;
 	}
 	
 	try {
 		readFile(databaseString, userDatabaseFileName);
-	} catch (char const* e) {
+	} catch (const char* e) {
 		delete inputUser;
 		throw e;
 	}
@@ -311,7 +311,7 @@ void CentralControl::updateUser(string inputUserString, string currentUserIdPass
 	size_t initialPosition, finalPosition;
 	try {
 		searchUserInDatabase(databaseString, initialPosition, finalPosition, inputUser->getId());
-	} catch (char const* e) {
+	} catch (const char* e) {
 		delete inputUser;
 		throw e;
 	}
@@ -320,7 +320,7 @@ void CentralControl::updateUser(string inputUserString, string currentUserIdPass
 
 	try {
 		writeFileClear(databaseString, userDatabaseFileName);
-	} catch (char const* e) {
+	} catch (const char* e) {
 		delete inputUser;
 		throw e;
 	}
@@ -350,7 +350,7 @@ void CentralControl::deleteUser(unsigned long int id, string currentUserIdPass) 
 
 	try {
 		readFile(databaseString, userDatabaseFileName);
-	} catch (char const* e) {
+	} catch (const char* e) {
 		throw e;
 	}
 
@@ -362,7 +362,7 @@ void CentralControl::deleteUser(unsigned long int id, string currentUserIdPass) 
 	size_t initialPosition, finalPosition;
 	try {
 		searchUserInDatabase(databaseString, initialPosition, finalPosition, id);
-	} catch (char const* e) {
+	} catch (const char* e) {
 		throw e;
 	}
 	
@@ -370,15 +370,67 @@ void CentralControl::deleteUser(unsigned long int id, string currentUserIdPass) 
 
 	try {
 		writeFileClear(databaseString, userDatabaseFileName);
-	} catch (char const* e) {
+	} catch (const char* e) {
 		throw e;
 	}
 }
 
+unsigned int CentralControl::weekDayToNumber(string weekDay) {
+	if (weekDay.compare("Sunday") == 0) {
+		return 0;
+	}
+	if (weekDay.compare("Monday") == 0) {
+		return 1;
+	}
+	if (weekDay.compare("Tuesday") == 0) {
+		return 2;
+	}
+	if (weekDay.compare("Wednesday") == 0) {
+		return 3;
+	}
+	if (weekDay.compare("Thursday") == 0) {
+		return 4;
+	}
+	if (weekDay.compare("Friday") == 0) {
+		return 5;
+	}
+	if (weekDay.compare("Saturday") == 0) {
+		return 6;
+	}
+
+	throw "Wrong weekDay input";
+}
+
+unsigned long int CentralControl::timeStringToNumber(string timeString) {
+	unsigned long int hour, min;
+	size_t prevPosition, position;
+
+	position = timeString.find(':');
+	if (position == string::npos) {
+		throw "Input line in the wrong format";
+	}
+	try {		
+		hour = stoul(timeString.substr(0, position));
+	} catch (const char* e) {
+		throw "Input line in the wrong format";		
+	}
+
+	prevPosition = position + 1;
+	position = timeString.find('\n');
+	try {		
+		min = stoul(timeString.substr(prevPosition, position));
+	} catch (const char* e) {
+		throw "Input line in the wrong format";		
+	}
+
+	return hour*3600 + min*60;
+}
+
 void CentralControl::checkin(string currentUserIdPass) {
 	string databaseUser;
-	unsigned long int currentUserId, dbUserId;
-	string currentUserPass, dbUserPass;
+	unsigned long int currentUserId, beginTimeSecs, endTimeSecs, currentTimeSecs;
+	string currentUserPass;
+	unsigned int beginWeekDay, endWeekDay, currentWeekDay;
 
 	try {
 		getUserIdPass(currentUserIdPass, currentUserId, currentUserPass);
@@ -392,30 +444,66 @@ void CentralControl::checkin(string currentUserIdPass) {
 		throw e;
 	}
 
+	User* checkinUser = NULL;
+
 	try {
-		getUserIdPass(databaseUser, dbUserId, dbUserPass);
+		checkinUser = stringToUser(databaseUser);
 	} catch (const char* e) {
+		delete checkinUser;
 		throw e;
 	}
 
-	if (dbUserPass == currentUserPass) {
-		User* checkinUser = new User();
-		try {
-			checkinUser = stringToUser(databaseUser);
-		} catch (const char* e) {
-			delete checkinUser;
-			throw e;
-		}
-		try {
-			activeUsers->insert(checkinUser);
-		} catch (const char* e) {
-			delete checkinUser;
-			throw e;
-		}
-		system("echo Door opened!\n");
-	} else {
+	try {
+		beginWeekDay = weekDayToNumber(checkinUser->getBeginWeekDay());
+		endWeekDay = weekDayToNumber(checkinUser->getEndWeekDay());
+		beginTimeSecs = timeStringToNumber(checkinUser->getBeginTime());
+		endTimeSecs = timeStringToNumber(checkinUser->getEndTime());
+	} catch (const char* e) {
+		delete checkinUser;
+		throw e;
+	}
+
+	myTime.updateTimeDateInfo();
+	currentTimeSecs = (unsigned) (myTime.getHour()*3600 + myTime.getMin()*60 + myTime.getSec());
+	try {
+		currentWeekDay = weekDayToNumber(myTime.getWeekDay());
+	} catch (const char* e) {
+		delete checkinUser;
+		throw e;
+	}
+
+	if (currentUserPass != checkinUser->getPassword()) {
+		delete checkinUser;
 		throw "Password do not match";
-	}	
+	}
+
+	if (currentTimeSecs <= beginTimeSecs) {
+		delete checkinUser;
+		throw "Current time before beginning time";
+	}
+
+	if (currentTimeSecs >= endTimeSecs) {
+		delete checkinUser;
+		throw "Current time after ending time";
+	}
+
+	if (currentWeekDay <= beginWeekDay) {
+		delete checkinUser;
+		throw "Current day of the week before begin week day";
+	}
+
+	if (currentWeekDay >= endWeekDay) {
+		delete checkinUser;
+		throw "Current day of the week after end week day";
+	}
+		
+	try {
+		activeUsers->insert(checkinUser);
+	} catch (const char* e) {
+		delete checkinUser;
+		throw e;
+	}
+	system("echo Door opened!\n");
 }
 
 void CentralControl::checkout(string currentUserIdPass) {

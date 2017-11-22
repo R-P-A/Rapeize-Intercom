@@ -47,7 +47,7 @@ class CentralControl {
 		 *	@param inputUserIdPass String which contains id and password in the following format "id,password".
 		 *	@param inputUserId Variable to save the id.
 		 *	@param inputUserPass Variable to save the password.
-		 *	@throw char const* "Input line in the wrong format".
+		 *	@throw const char* "Input line in the wrong format".
 		 */
 		void getUserIdPass(string& inputUserIdPass, unsigned long int& inputUserId, string& inputUserPass);
 
@@ -55,7 +55,7 @@ class CentralControl {
 		 *	Transform a string with user data in csv format into a user.
 		 *	@param dbLine User passed in the format "id,password,isAdmin,name,phone,email,beginWeekDay,endWeekDay,beginTime,endTime".
 		 *	@return The pointer to the user created.
-		 *	@throw char const* "Input line in the wrong format".
+		 *	@throw const char* "Input line in the wrong format".
 		 */
 		User* stringToUser(string& dbLine);
 
@@ -65,9 +65,23 @@ class CentralControl {
 		 *	@param initialPosition Initial position of the user in the string.
 		 *	@param finalPosition Final position of the user in the string.
 		 *	@param id The id of the user to search.
-		 *	@throw char const* "Input line in the wrong format".
+		 *	@throw const char* "Input line in the wrong format".
 		 */
 		void searchUserInDatabase(string& databaseString, size_t& initialPosition, size_t& finalPosition, unsigned long int id);
+
+		/**
+		 *	Convert week day in string format ("Monday") to a number from 0-6.
+		 *	@param weekDay String with the week day in string format ("Monday").
+		 *	@throw const char* "Wrong weekDay input".
+		 */
+		unsigned int weekDayToNumber(string weekDay);
+
+		/**
+		 *	Convert a time in string format ("hh:mm") to a number of seconds.
+		 *	@param timeString String with the time in the following format ("hh:mm").
+		 *	@throw const char* "Input line in the wrong format".
+		 */
+		unsigned long int timeStringToNumber(string timeString);
 
 	public:
 		/**
@@ -104,7 +118,7 @@ class CentralControl {
 		 *	Create a user in the database.
 		 *	@param inputUserString The user data in the format "id,password,isAdmin,name,phone,email,beginWeekDay,endWeekDay,beginTime,endTime".
 		 *	@param currentUserIdPass The id and pass of the user trying to modify the database. Format "id,password".
-		 *	@throw char const* "Input line in the wrong format".
+		 *	@throw const char* "Input line in the wrong format".
 		 *	@throw const char* "Couldn't open the file".
 		 *	@throw const char* "No permission to create user".
 		 *	@throw const char* "First user isn't admin".
@@ -125,7 +139,7 @@ class CentralControl {
 		 *	Update a user that already exists in the database.
 		 *	@param inputUserString The user updated data in the format "id,password,isAdmin,name,phone,email,beginWeekDay,endWeekDay,beginTime,endTime".
 		 *	@param currentUserIdPass The id and pass of the user trying to modify the database. Format "id,password".
-		 *	@throw char const* "Input line in the wrong format".
+		 *	@throw const char* "Input line in the wrong format".
 		 *	@throw const char* "Couldn't open the file".
 		 *	@throw const char* "No permission to update user".
 		 *	@throw const char* "User not found".
@@ -136,7 +150,7 @@ class CentralControl {
 		 *	Delete a user that already exists in the database.
 		 *	@param id The user id to be deleted.
 		 *	@param currentUserIdPass The id and pass of the user trying to modify the database. Format "id,password".
-		 *	@throw char const* "Input line in the wrong format".
+		 *	@throw const char* "Input line in the wrong format".
 		 *	@throw const char* "Couldn't open the file".
 		 *	@throw const char* "Can't delete current user".
 		 *	@throw const char* "No permission to delete user".
@@ -147,7 +161,7 @@ class CentralControl {
 		/**
 		 *	Checkin with the current user accessing it.
 		 *	@param currentUserIdPass The id and pass of the user trying to checkin. Format "id,password".
-		 *	@throw char const* "Input line in the wrong format".
+		 *	@throw const char* "Input line in the wrong format".
 		 *	@throw const char* "Couldn't open the file".
 		 *	@throw const char* "User not found".
 		 *	@throw const char* "Password do not match".
@@ -157,22 +171,28 @@ class CentralControl {
 		/**
 		 *	Checkin with the current user accessing it.
 		 *	@param currentUserIdPass The id and pass of the user trying to checkout. Format "id,password".
-		 *	@throw char const* "Input line in the wrong format".
+		 *	@throw const char* "Input line in the wrong format".
 		 *	@throw const char* "Id not found".
+		 *	@throw const char* "Password do not match".
+		 *	@throw const char* "Wrong weekDay input".
+		 *	@throw const char* "Current time before beginning time";
+		 *	@throw const char* "Current time after ending time";
+		 *	@throw const char* "Current day of the week before begin week day";
+		 *	@throw const char* "Current day of the week after end week day";
 		 */
 		void checkout(string currentUserIdPass);
 
 		/**
 		 *	Checkin with the current user accessing it.
 		 *	@param currentUserIdPass The id and pass of the user trying to open the door. Format "id,password".
-		 *	@throw char const* "Input line in the wrong format".
+		 *	@throw const char* "Input line in the wrong format".
 		 *	@throw const char* "User not checked-in".
 		 */
 		unsigned long int openDoor(string currentUserIdPass);
 
 		/**
 		 *	Returns a list with all checked-in users in csv format.
-		 *	@throw char const* "Conversion from string to unsigned long int not valid".
+		 *	@throw const char* "Conversion from string to unsigned long int not valid".
 		 *	@throw const char* "Active Users list corrupted".
 		 */
 		string getActiveUsers();
