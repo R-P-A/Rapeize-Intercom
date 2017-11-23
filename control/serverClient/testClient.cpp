@@ -11,9 +11,9 @@ int main() {
 	int i = 0;
 	while (i < 10) {
 		try {
-			ClientSocket client_socket("192.168.1.4", 8888);
+			ClientSocket client_socket("192.168.1.5", 8888);
 			string reply;
-			client_socket << "isDatabaseClear";
+			client_socket << "checkin,14204800,pass";
 			client_socket >> reply;
 			cout << "We received this response from the server:" << endl << reply << endl;
 			i = 11;

@@ -28,7 +28,7 @@ void CentralControl::getUserIdPass(string& inputUserIdPass, unsigned long int& i
 	tempId = inputUserIdPass.substr(0, position);
 	try {
 		inputUserId = stoul(tempId);
-	} catch (const char* e) {
+	} catch (...) {
 		throw "Input line in the wrong format";
 	}
 
@@ -51,7 +51,7 @@ User* CentralControl::stringToUser(string& dbLine) {
 	buffer = dbLine.substr(0, position);
 	try {
 		output->setId(stoul(buffer));
-	} catch (const char* e) {
+	} catch (...) {
 		output = NULL;
 		throw "Input line in the wrong format";
 	}
@@ -411,7 +411,7 @@ unsigned long int CentralControl::timeStringToNumber(string timeString) {
 	}
 	try {		
 		hour = stoul(timeString.substr(0, position));
-	} catch (const char* e) {
+	} catch (...) {
 		throw "Input line in the wrong format";		
 	}
 
@@ -419,7 +419,7 @@ unsigned long int CentralControl::timeStringToNumber(string timeString) {
 	position = timeString.find('\n');
 	try {		
 		min = stoul(timeString.substr(prevPosition, position));
-	} catch (const char* e) {
+	} catch (...) {
 		throw "Input line in the wrong format";		
 	}
 
@@ -556,7 +556,7 @@ string CentralControl::getActiveUsers() {
 		}
 		try {
 			currentUserId = stoul(activeUsersId.substr(initialPosition, (finalPosition - initialPosition)));
-		} catch (const char* e) {
+		} catch (...) {
 			throw "Conversion from string to unsigned long int not valid";
 		}
 		currentUser = (User*) activeUsers->search(currentUserId);
