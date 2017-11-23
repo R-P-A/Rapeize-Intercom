@@ -444,7 +444,7 @@ void CentralControl::checkin(unsigned long int currentUserId, string currentUser
 		delete checkinUser;
 		throw "Current day of the week after end week day";
 	}
-	
+
 	system("echo Door opened!\n");
 		
 	try {
@@ -482,6 +482,7 @@ string CentralControl::getActiveUsers() {
 
 	string activeUsersId = activeUsers->listAll();
 	if (activeUsersId.empty()) {
+		allActiveUsers += "\n";
 		return allActiveUsers;
 	}
 

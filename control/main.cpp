@@ -5,7 +5,12 @@
 
 using namespace std;
 
+// Functions declarations
 string callHandler(CentralControl* control, string& input);
+void getCommandIdPass(string& input, string& command, unsigned long int& id, string& password);
+string checkinHandler(CentralControl* control, unsigned long int id, string& password);
+string getActiveUsersHandler(CentralControl* control);
+string checkoutHandler(CentralControl* control, unsigned long int id, string& password);
 
 int main() {
 	CentralControl* control = new CentralControl();
@@ -17,15 +22,15 @@ int main() {
 
 		int i = 0;
 		// This variable is just for testing, in the future this will be while(true)
-		while (i < 8) {
+		while (i < 15) {
 			ServerSocket newSocket;
 			server.accept(newSocket);
-			cout << "Connected!\n";
+			cout << "Connected!" << endl;
 			try {
 				string input, output;
 				newSocket >> input;
 				output = callHandler(control, input);
-				cout << "Returned: " << output << endl;
+				cout << "Returned: " << output;
 				newSocket << output;
 			} catch (SocketException& e) {
 				cout << "Socket exception was caught: " << e.description() << endl;
@@ -38,32 +43,104 @@ int main() {
 	}
 
 	delete control;
-
 	return 0;
 }
 
-void getCommandIdPass(string& input, string& command, bool& isCheckedIn, unsigned long int& id, string& password) {
+string callHandler(CentralControl* control, string& input) {
+	
+	string output, command, password;
+	unsigned long int id;
+
+	try {
+		getCommandIdPass(input, command, id, password);
+	} catch (const char* e) {
+		output = e;
+		output += "\n";
+		return output;
+	}
+
+	if (command == "checkin") {
+		cout << "Got checkin\n";
+		output = checkinHandler(control, id, password);
+		return output;
+	}
+
+	if (command == "getActiveUsers") {
+		cout << "Got getActiveUsers\n";
+		output = getActiveUsersHandler(control);
+		return output;
+	}
+
+	if (command == "checkout") {
+		cout << "Got checkout\n";
+		output = checkoutHandler(control, id, password);
+		return output;
+	}
+
+	output = "Wrong command\n";
+	return output;
+}
+
+string checkinHandler(CentralControl* control, unsigned long int id, string& password) {
+	string output;
+	try {
+		control->checkin(id, password);
+	} catch (const char* e) {
+		if (strcmp(e, "Id already exists") == 0) {
+			output = "Checked-in with success\n";
+			cout << "User already is checked-in\n";
+			return output;
+		}
+		output = e;
+		output += "\n";
+		return output;
+	}
+	output = "Checked-in with success\n";
+	return output;
+}
+
+string getActiveUsersHandler(CentralControl* control) {
+	string output;
+	try {
+		output = control->getActiveUsers();
+	} catch (const char* e) {
+		output = e;
+		output += "\n";
+		return output;
+	}
+	return output;
+}
+
+string checkoutHandler(CentralControl* control, unsigned long int id, string& password) {
+	string output;
+	try {
+		control->checkout(id);
+	} catch (const char* e) {
+		output = checkinHandler(control, id, password);
+		if (output == "Checked-in with success\n") {
+			try {
+				control->checkout(id);
+			} catch (const char* e) {
+				output = e;
+				output += "\n";
+				return output;
+			}
+			output = "Checked-out with success\n";
+			return output;
+		}
+		return output;
+	}
+	output = "Checked-out with success\n";
+	return output;
+}
+
+void getCommandIdPass(string& input, string& command, unsigned long int& id, string& password) {
 	size_t initialPosition, finalPosition;
-	string buffer;
 	
 	finalPosition = input.find(',', 0);
 	command = input.substr(0, finalPosition);
 	if (finalPosition == string::npos) {
-		throw "Missing isCheckedIn id and password";
-	}
-
-	initialPosition = finalPosition + 1;
-	finalPosition = input.find(',', initialPosition);
-	if (finalPosition == string::npos) {
 		throw "Missing id and password";
-	}
-	buffer = input.substr(initialPosition, finalPosition - initialPosition);
-	if (buffer == "1") {
-		isCheckedIn = true;
-	} else if (buffer == "0") {
-		isCheckedIn = false;
-	} else {
-		throw "Wrong isCheckedIn input";
 	}
 
 	initialPosition = finalPosition + 1;
@@ -82,36 +159,3 @@ void getCommandIdPass(string& input, string& command, bool& isCheckedIn, unsigne
 	password = input.substr(initialPosition, finalPosition - initialPosition);
 }
 
-string callHandler(CentralControl* control, string& input) {
-	
-	string output, command, password;
-	bool isCheckedIn = true;
-	unsigned long int id;
-
-	try {
-		getCommandIdPass(input, command, isCheckedIn, id, password);
-	} catch (const char* e) {
-		output = e;
-		return output;
-	}
-
-	if (command == "checkin") {
-		cout << "Got checkin" << endl;
-		try {
-			control->checkin(id, password);
-		} catch (const char* e) {
-			if (strcmp(e, "Id already exists") == 0) {
-				output = "Checked-in with success. Door opened.";
-				cout << "User already is checked-in." << endl;
-				return output;
-			}
-			output = e;
-			return output;
-		}
-		output = "Checked-in with success. Door opened.";
-		return output;
-	}
-
-	output = "Wrong command";
-	return output;
-}

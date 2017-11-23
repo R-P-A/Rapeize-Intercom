@@ -15,11 +15,11 @@ void callServer(string& input) {
 			string reply;
 			client_socket << input;
 			client_socket >> reply;
-			cout << "Server Response:" << endl << reply << endl << endl;
+			cout << "Server Response:" << endl << reply << endl;
 			i = 11;
 		}
 		catch(SocketException& e) {
-			cout << "Exception was caught:" << e.description() << "\n";
+			cout << "Exception was caught: " << e.description() << endl;
 			i++;
 		}
 		usleep(500000);
@@ -29,36 +29,64 @@ void callServer(string& input) {
 int main() {
 	string input;
 
-	cout << endl << "Try to call with input missing isCheckedIn, id and password" << endl;
+	cout << "Try to call with input missing id and password" << endl;
 	input = "cheasd";
 	callServer(input);
 
-	cout << endl << "Try to call with input missing id and password" << endl;
-	input = "cheasd,0";
+	cout << "Try to call with input missing password" << endl;
+	input = "cheasd,48";
 	callServer(input);
 
-	cout << endl << "Try to call with input missing password" << endl;
-	input = "cheasd,0,10";
+	cout << "Try to call with non-existing command" << endl;
+	input = "cheasd,48,asd";
 	callServer(input);
 
-	cout << endl << "Try to call with non-existing command" << endl;
-	input = "cheasd,0,10,asd";
+	cout << "Try to checkin with non-existing user" << endl;
+	input = "checkin,48,asd";
 	callServer(input);
 
-	cout << endl << "Try to checkin with non-existing user" << endl;
-	input = "checkin,0,10,asd";
+	cout << "Try to checkin with wrong password" << endl;
+	input = "checkin,487,pas";
 	callServer(input);
 
-	cout << endl << "Try to checkin with wrong password" << endl;
-	input = "checkin,0,487,pas";
+	cout << "Get all users successfully. The list is empty." << endl;
+	input = "getActiveUsers,487,pass";
 	callServer(input);
 
-	cout << endl << "Checkin with user 487 successfully" << endl;
-	input = "checkin,0,487,pass";
+	cout << "Checkout successfully with user 487 before checking in (in case of server failure)" << endl;
+	input = "checkout,487,pass";
 	callServer(input);
 
-	cout << endl << "Try to checkin with already checked-in user" << endl;
-	input = "checkin,1,487,pass";
+	cout << "Try to checkout with user 487 before checking in (in case of server failure) with non-existing id" << endl;
+	input = "checkout,48,pass";
+	callServer(input);
+
+	cout << "Try to checkout with user 487 before checking in (in case of server failure) with wrong password" << endl;
+	input = "checkout,487,pas";
+	callServer(input);
+
+	cout << "Get all users successfully. The list is empty." << endl;
+	input = "getActiveUsers,487,pass";
+	callServer(input);
+
+	cout << "Checkin successfully with user 487" << endl;
+	input = "checkin,487,pass";
+	callServer(input);
+
+	cout << "Checkin successfully with already checked-in user 487" << endl;
+	input = "checkin,487,pass";
+	callServer(input);
+
+	cout << "Get all users successfully. The list has user 487." << endl;
+	input = "getActiveUsers,487,pass";
+	callServer(input);
+
+	cout << "Checkout successfully with user 487" << endl;
+	input = "checkout,487,pass";
+	callServer(input);
+
+	cout << "Get all users successfully. The list is empty." << endl;
+	input = "getActiveUsers,487,pass";
 	callServer(input);
 
 	return 0;
