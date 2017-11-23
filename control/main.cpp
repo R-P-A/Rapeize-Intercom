@@ -8,9 +8,10 @@ using namespace std;
 // Functions declarations
 string callHandler(CentralControl* control, string& input);
 void getCommandIdPass(string& input, string& command, unsigned long int& id, string& password);
-string checkinHandler(CentralControl* control, unsigned long int id, string& password);
-string getActiveUsersHandler(CentralControl* control);
-string checkoutHandler(CentralControl* control, unsigned long int id, string& password);
+void checkinHandler(CentralControl* control, string& output, unsigned long int id, string& password);
+void getActiveUsersHandler(CentralControl* control, string& output);
+void checkoutHandler(CentralControl* control, string& output, unsigned long int id, string& password);
+void openDoorHandler(CentralControl* control, string& output, unsigned long int id, string& password);
 
 int main() {
 	CentralControl* control = new CentralControl();
@@ -22,7 +23,7 @@ int main() {
 
 		int i = 0;
 		// This variable is just for testing, in the future this will be while(true)
-		while (i < 15) {
+		while (i < 23) {
 			ServerSocket newSocket;
 			server.accept(newSocket);
 			cout << "Connected!" << endl;
@@ -61,19 +62,25 @@ string callHandler(CentralControl* control, string& input) {
 
 	if (command == "checkin") {
 		cout << "Got checkin\n";
-		output = checkinHandler(control, id, password);
+		checkinHandler(control, output, id, password);
 		return output;
 	}
 
 	if (command == "getActiveUsers") {
 		cout << "Got getActiveUsers\n";
-		output = getActiveUsersHandler(control);
+		getActiveUsersHandler(control, output);
 		return output;
 	}
 
 	if (command == "checkout") {
 		cout << "Got checkout\n";
-		output = checkoutHandler(control, id, password);
+		checkoutHandler(control, output, id, password);
+		return output;
+	}
+
+	if (command == "openDoor") {
+		cout << "Got openDoor\n";
+		openDoorHandler(control, output, id, password);
 		return output;
 	}
 
@@ -81,57 +88,76 @@ string callHandler(CentralControl* control, string& input) {
 	return output;
 }
 
-string checkinHandler(CentralControl* control, unsigned long int id, string& password) {
-	string output;
+void checkinHandler(CentralControl* control, string& output, unsigned long int id, string& password) {
 	try {
 		control->checkin(id, password);
 	} catch (const char* e) {
 		if (strcmp(e, "Id already exists") == 0) {
 			output = "Checked-in with success\n";
 			cout << "User already is checked-in\n";
-			return output;
+			return;
 		}
 		output = e;
 		output += "\n";
-		return output;
+		return;
 	}
 	output = "Checked-in with success\n";
-	return output;
+	return;
 }
 
-string getActiveUsersHandler(CentralControl* control) {
-	string output;
+void getActiveUsersHandler(CentralControl* control, string& output) {
 	try {
 		output = control->getActiveUsers();
 	} catch (const char* e) {
 		output = e;
 		output += "\n";
-		return output;
+		return;
 	}
-	return output;
+	return;
 }
 
-string checkoutHandler(CentralControl* control, unsigned long int id, string& password) {
-	string output;
+void checkoutHandler(CentralControl* control, string& output, unsigned long int id, string& password) {
 	try {
 		control->checkout(id);
 	} catch (const char* e) {
-		output = checkinHandler(control, id, password);
+		checkinHandler(control, output, id, password);
 		if (output == "Checked-in with success\n") {
 			try {
 				control->checkout(id);
 			} catch (const char* e) {
 				output = e;
 				output += "\n";
-				return output;
+				return;
 			}
 			output = "Checked-out with success\n";
-			return output;
+			return;
 		}
-		return output;
+		return;
 	}
 	output = "Checked-out with success\n";
-	return output;
+	return;
+}
+
+void openDoorHandler(CentralControl* control, string& output, unsigned long int id, string& password) {
+	try {
+		control->openDoor(id);
+	} catch (const char* e) {
+		checkinHandler(control, output, id, password);
+		if (output == "Checked-in with success\n") {
+			try {
+				control->openDoor(id);
+			} catch (const char* e) {
+				output = e;
+				output += "\n";
+				return;
+			}
+			output = "Door opened\n";
+			return;
+		}
+		return;
+	}
+	output = "Door opened\n";
+	return;
 }
 
 void getCommandIdPass(string& input, string& command, unsigned long int& id, string& password) {

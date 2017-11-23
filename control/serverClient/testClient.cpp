@@ -69,12 +69,44 @@ int main() {
 	input = "getActiveUsers,487,pass";
 	callServer(input);
 
+	cout << "Open door successfully with user 487 before checking in (in case of server failure)" << endl;
+	input = "openDoor,487,pass";
+	callServer(input);
+
+	cout << "Get all users successfully. The list has user 487." << endl;
+	input = "getActiveUsers,487,pass";
+	callServer(input);
+
+	cout << "Checkout successfully with user 487 before checking in (in case of server failure)" << endl;
+	input = "checkout,487,pass";
+	callServer(input);
+
+	cout << "Get all users successfully. The list is empty." << endl;
+	input = "getActiveUsers,487,pass";
+	callServer(input);
+
+	cout << "Try to open door with user 487 before checking in (in case of server failure) with non-existing id" << endl;
+	input = "checkout,48,pass";
+	callServer(input);
+
+	cout << "Try to open door with user 487 before checking in (in case of server failure) with wrong password" << endl;
+	input = "checkout,487,pas";
+	callServer(input);
+
+	cout << "Get all users successfully. The list is empty." << endl;
+	input = "getActiveUsers,487,pass";
+	callServer(input);
+
 	cout << "Checkin successfully with user 487" << endl;
 	input = "checkin,487,pass";
 	callServer(input);
 
 	cout << "Checkin successfully with already checked-in user 487" << endl;
 	input = "checkin,487,pass";
+	callServer(input);
+
+	cout << "Open door successfully with user 487" << endl;
+	input = "openDoor,487,pass";
 	callServer(input);
 
 	cout << "Get all users successfully. The list has user 487." << endl;
