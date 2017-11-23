@@ -8,6 +8,7 @@
  *	@section DESCRIPTION
  *	
  *	The id depends on the the other class Model. This class extends Model.
+ *	The format of the user is: "id,password,isAdmin,name,phone,email,Monday,Friday,hh:mm,hh:mm".
  *
  */
 

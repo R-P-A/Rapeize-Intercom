@@ -5,7 +5,7 @@
 
 using namespace std;
 
-string callResponse(CentralControl* control, string& input);
+string callHandler(CentralControl* control, string& input);
 
 int main() {
 	CentralControl* control = new CentralControl();
@@ -15,21 +15,24 @@ int main() {
 		// Create the socket
 		ServerSocket server(8888);
 
-		// while (true) {
+		int i = 0;
+		// This variable is just for testing, in the future this will be while(true)
+		while (i < 8) {
 			ServerSocket newSocket;
 			server.accept(newSocket);
 			cout << "Connected!\n";
 			try {
 				string input, output;
 				newSocket >> input;
-				output = callResponse(control, input);
-				cout << output << endl;
+				output = callHandler(control, input);
+				cout << "Returned: " << output << endl;
 				newSocket << output;
 			} catch (SocketException& e) {
-				cout << "Exception was caught: " << e.description() << "\nExiting.\n";
+				cout << "Socket exception was caught: " << e.description() << endl;
 			}
 			cout << endl;
-		// }
+			i++;
+		}
 	} catch (SocketException& e) {
 		cout << "Exception was caught: " << e.description() << "\nExiting.\n";
 	}
@@ -39,121 +42,76 @@ int main() {
 	return 0;
 }
 
-void getCommandIdPass(string& input, string& command, unsigned long int& id, string& password) {
-	size_t position, finalPosition;
+void getCommandIdPass(string& input, string& command, bool& isCheckedIn, unsigned long int& id, string& password) {
+	size_t initialPosition, finalPosition;
+	string buffer;
 	
-	position = input.find(',', 0);
-	command = input.substr(0, position);
-	if (position == string::npos) {
+	finalPosition = input.find(',', 0);
+	command = input.substr(0, finalPosition);
+	if (finalPosition == string::npos) {
+		throw "Missing isCheckedIn id and password";
+	}
+
+	initialPosition = finalPosition + 1;
+	finalPosition = input.find(',', initialPosition);
+	if (finalPosition == string::npos) {
 		throw "Missing id and password";
 	}
-	position++;
-	finalPosition = input.find(',', position);
+	buffer = input.substr(initialPosition, finalPosition - initialPosition);
+	if (buffer == "1") {
+		isCheckedIn = true;
+	} else if (buffer == "0") {
+		isCheckedIn = false;
+	} else {
+		throw "Wrong isCheckedIn input";
+	}
+
+	initialPosition = finalPosition + 1;
+	finalPosition = input.find(',', initialPosition);
 	if (finalPosition == string::npos) {
 		throw "Missing password";
 	}
 	try {
-		id = stoul(input.substr(position, finalPosition - position));
+		id = stoul(input.substr(initialPosition, finalPosition - initialPosition));
 	} catch (...) {
 		throw "Wrong id input";
 	}
-	finalPosition++;
+
+	initialPosition = finalPosition + 1;
 	finalPosition = input.find(',', finalPosition);
-	password = input.substr(position, finalPosition - position);
+	password = input.substr(initialPosition, finalPosition - initialPosition);
 }
 
-string callResponse(CentralControl* control, string& input) {
+string callHandler(CentralControl* control, string& input) {
 	
 	string output, command, password;
+	bool isCheckedIn = true;
 	unsigned long int id;
 
 	try {
-		getCommandIdPass(input, command, id, password);
+		getCommandIdPass(input, command, isCheckedIn, id, password);
 	} catch (const char* e) {
 		output = e;
-		cout << "Returned exception: " << output << endl;
 		return output;
 	}
 
-	if (command.compare("checkin") == 0) {
+	if (command == "checkin") {
 		cout << "Got checkin" << endl;
-
 		try {
-			control->checkin(password);
+			control->checkin(id, password);
 		} catch (const char* e) {
+			if (strcmp(e, "Id already exists") == 0) {
+				output = "Checked-in with success. Door opened.";
+				cout << "User already is checked-in." << endl;
+				return output;
+			}
 			output = e;
-			cout << "Returned exception: " << output << endl;
 			return output;
 		}
 		output = "Checked-in with success. Door opened.";
 		return output;
 	}
 
-	// if (buffer.compare("isDa1tabaseClear") == 0) {
-	// 	cout << "Got isDatabaseClear" << endl;
-	// 	if (control->isDatabaseClear()) {
-	// 		output = "true";
-	// 		return output;
-	// 	}
-	// 	output = "false";
-	// 	cout << "Returned: " << output << endl;
-	// 	return output;
-	// }
-
-	// if (buffer.compare("isUserCheckedin") == 0) {
-	// 	cout << "Got isUserCheckedin" << endl;
-	// 	if (position == string::npos) {
-	// 		output = "Missing id";
-	// 		cout << "Returned: " << output << endl;
-	// 		return output;
-	// 	}
-	// 	prevPosition = position + 1;
-	// 	position = input.find(',', prevPosition);
-	// 	try {
-	// 		id = stoul(input.substr(prevPosition, position - prevPosition));
-	// 	} catch (...) {
-	// 		output = "Wrong id input";
-	// 		cout << "Returned exception: " << output << endl;
-	// 		return output;			
-	// 	}
-
-	// 	if (control->isUserCheckedin(id)) {
-	// 		output = "true";
-	// 		return output;
-	// 	}
-	// 	output = "false";
-	// 	cout << "Returned: " << output << endl;
-	// 	return output;
-	// }
-
-	// if (buffer.compare("canModifyDatabase") == 0) {
-	// 	cout << "Got isUserCheckedin" << endl;
-	// 	if (position == string::npos) {
-	// 		output = "Missing id";
-	// 		cout << "Returned: " << output << endl;
-	// 		return output;
-	// 	}
-	// 	prevPosition = position + 1;
-	// 	position = input.find(',', prevPosition);
-	// 	try {
-	// 		id = stoul(input.substr(prevPosition, position - prevPosition));
-	// 	} catch (...) {
-	// 		output = "Wrong id input";
-	// 		cout << "Returned exception: " << output << endl;
-	// 		return output;			
-	// 	}
-
-	// 	if (control->canModifyDatabase(id)) {
-	// 		output = "true";
-	// 		return output;
-	// 	}
-	// 	output = "false";
-	// 	cout << "Returned: " << output << endl;
-	// 	return output;
-	// }
-
-	// inputUserPass = inputUserIdPass.substr(prevPosition, position - prevPosition);
-	// control->getUserIdPass(input, id, pass);
 	output = "Wrong command";
 	return output;
 }

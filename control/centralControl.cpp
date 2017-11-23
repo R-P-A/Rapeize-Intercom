@@ -16,27 +16,6 @@ CentralControl::~CentralControl() {
 	delete activeUsers;
 }
 
-void CentralControl::getUserIdPass(string& inputUserIdPass, unsigned long int& inputUserId, string& inputUserPass) {
-	size_t position;
-	size_t prevPosition;
-	string tempId;
-
-	position = inputUserIdPass.find(',');
-	if (position == string::npos) {
-		throw "Input line in the wrong format";
-	}
-	tempId = inputUserIdPass.substr(0, position);
-	try {
-		inputUserId = stoul(tempId);
-	} catch (...) {
-		throw "Input line in the wrong format";
-	}
-
-	prevPosition = position + 1;
-	position = inputUserIdPass.find(',', prevPosition);
-	inputUserPass = inputUserIdPass.substr(prevPosition, position - prevPosition);
-}
-
 User* CentralControl::stringToUser(string& dbLine) {
 	User* output = new User();
 	string buffer;
@@ -200,17 +179,9 @@ bool CentralControl::canModifyDatabase(unsigned long int id) {
 	return tempUser->getIsAdmin();
 }
 
-void CentralControl::createUser(string inputUserString, string currentUserIdPass) {
+void CentralControl::createUser(unsigned long int currentUserId, string inputUserString) {
 	User* inputUser = NULL;
 	string databaseString;
-	unsigned long int currentUserId;
-	string currentUserPass;
-
-	try {
-		getUserIdPass(currentUserIdPass, currentUserId, currentUserPass);
-	} catch (const char* e) {
-		throw e;
-	}
 
 	try {
 		inputUser = stringToUser(inputUserString);
@@ -276,17 +247,9 @@ string CentralControl::readUser(unsigned long int id) {
 	return userString;
 }
 
-void CentralControl::updateUser(string inputUserString, string currentUserIdPass) {
+void CentralControl::updateUser(unsigned long int currentUserId, string inputUserString) {
 	string databaseString;
 	User* inputUser = NULL;
-	unsigned long int currentUserId;
-	string currentUserPass;
-
-	try {
-		getUserIdPass(currentUserIdPass, currentUserId, currentUserPass);
-	} catch (const char* e) {
-		throw e;
-	}
 
 	try {
 		inputUser = stringToUser(inputUserString);
@@ -333,16 +296,8 @@ void CentralControl::updateUser(string inputUserString, string currentUserIdPass
 	}
 }
 
-void CentralControl::deleteUser(unsigned long int id, string currentUserIdPass) {
+void CentralControl::deleteUser(unsigned long int currentUserId, unsigned long int id) {
 	string databaseString;
-	unsigned long int currentUserId;
-	string currentUserPass;
-
-	try {
-		getUserIdPass(currentUserIdPass, currentUserId, currentUserPass);
-	} catch (const char* e) {
-		throw e;
-	}
 
 	if (id == currentUserId) {
 		throw "Can't delete current user";
@@ -426,17 +381,10 @@ unsigned long int CentralControl::timeStringToNumber(string timeString) {
 	return hour*3600 + min*60;
 }
 
-void CentralControl::checkin(string currentUserIdPass) {
+void CentralControl::checkin(unsigned long int currentUserId, string currentUserPass) {
 	string databaseUser;
-	unsigned long int currentUserId, beginTimeSecs, endTimeSecs, currentTimeSecs;
-	string currentUserPass;
+	unsigned long int beginTimeSecs, endTimeSecs, currentTimeSecs;
 	unsigned int beginWeekDay, endWeekDay, currentWeekDay;
-
-	try {
-		getUserIdPass(currentUserIdPass, currentUserId, currentUserPass);
-	} catch (const char* e) {
-		throw e;
-	}
 
 	try {
 		databaseUser = readUser(currentUserId);
@@ -496,6 +444,8 @@ void CentralControl::checkin(string currentUserIdPass) {
 		delete checkinUser;
 		throw "Current day of the week after end week day";
 	}
+	
+	system("echo Door opened!\n");
 		
 	try {
 		activeUsers->insert(checkinUser);
@@ -503,13 +453,10 @@ void CentralControl::checkin(string currentUserIdPass) {
 		delete checkinUser;
 		throw e;
 	}
-	system("echo Door opened!\n");
 }
 
-void CentralControl::checkout(string currentUserIdPass) {
-	unsigned long int currentUserId;
-
-	currentUserId = openDoor(currentUserIdPass);
+void CentralControl::checkout(unsigned long int currentUserId) {
+	system("echo Door opened!\n");
 
 	try {
 		activeUsers->remove(currentUserId);
@@ -518,23 +465,12 @@ void CentralControl::checkout(string currentUserIdPass) {
 	}	
 }
 
-unsigned long int CentralControl::openDoor(string currentUserIdPass) {
-	unsigned long int currentUserId;
-	string currentUserPass;
-
-	try {
-		getUserIdPass(currentUserIdPass, currentUserId, currentUserPass);
-	} catch (const char* e) {
-		throw e;
-	}
-
+void CentralControl::openDoor(unsigned long int currentUserId) {
 	if (!isUserCheckedin(currentUserId)) {
 		throw "User not checked-in";
 	}
 
 	system("echo Door opened!\n");
-
-	return currentUserId;
 }
 
 string CentralControl::getActiveUsers() {
@@ -563,7 +499,10 @@ string CentralControl::getActiveUsers() {
 		if (currentUser == NULL) {
 			throw "Active Users list corrupted";
 		}
-		allActiveUsers += currentUser->toString();
+		allActiveUsers += to_string(currentUser->getId()) + ",";
+		allActiveUsers += currentUser->getName() + ",";
+		allActiveUsers += currentUser->getPhone() + ",";
+		allActiveUsers += currentUser->getEmail() + "\n";
 		initialPosition = finalPosition + 1;
 	}
 }
