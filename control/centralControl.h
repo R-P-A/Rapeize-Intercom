@@ -43,15 +43,6 @@ class CentralControl {
 		string userDatabaseFileName;
 
 		/**
-		 *	Transform a string with id and password into a number for id and string for password.
-		 *	@param inputUserIdPass String which contains id and password in the following format "id,password".
-		 *	@param inputUserId Variable to save the id.
-		 *	@param inputUserPass Variable to save the password.
-		 *	@throw const char* "Input line in the wrong format".
-		 */
-		void getUserIdPass(string& inputUserIdPass, unsigned long int& inputUserId, string& inputUserPass);
-
-		/**
 		 *	Transform a string with user data in csv format into a user.
 		 *	@param dbLine User passed in the format "id,password,isAdmin,name,phone,email,beginWeekDay,endWeekDay,beginTime,endTime".
 		 *	@return The pointer to the user created.
@@ -113,6 +104,15 @@ class CentralControl {
 		 *	@return Whether the user is admin.
 		 */
 		bool canModifyDatabase(unsigned long int id);
+
+		/**
+		 *	Transform a string with id and password into a number for id and string for password.
+		 *	@param inputUserIdPass String which contains id and password in the following format "id,password".
+		 *	@param inputUserId Variable to save the id.
+		 *	@param inputUserPass Variable to save the password.
+		 *	@throw const char* "Input line in the wrong format".
+		 */
+		void getUserIdPass(string& inputUserIdPass, unsigned long int& inputUserId, string& inputUserPass);
 
 		/**
 		 *	Create a user in the database.

@@ -1,6 +1,6 @@
 CXX = g++
 CXXFLAGS = -Wall
-SRCS = centralControl.cpp dateTime.cpp model.cpp myio.cpp sortedList.cpp user.cpp testCentralControl.cpp
+SRCS = centralControl.cpp dateTime.cpp model.cpp myio.cpp sortedList.cpp user.cpp socket.cpp serverSocket.cpp main.cpp
 OBJS = ${SRCS:.cpp=.o}
 
 all: windows
@@ -30,7 +30,13 @@ sortedList: $@.cpp $@.h
 user: $@.cpp $@.h
 	$(CXX) $(CXXFLAGS) $@.cpp -c
 
-testCentralControl: $@.cpp $(OBJS)
+socket: $@.cpp $@.h
+	$(CXX) $(CXXFLAGS) $@.cpp -c
+
+serverSocket: $@.cpp $@.h
+	$(CXX) $(CXXFLAGS) $@.cpp -c
+
+main: $@.cpp $(OBJS)
 	$(CXX) $(CXXFLAGS) $@.cpp -c
 
 clean:

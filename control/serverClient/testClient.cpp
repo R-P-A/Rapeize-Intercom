@@ -11,11 +11,11 @@ int main() {
 	int i = 0;
 	while (i < 10) {
 		try {
-			ClientSocket client_socket("192.168.1.95", 8888);
+			ClientSocket client_socket("192.168.1.4", 8888);
 			string reply;
-			client_socket << "Test message.";
+			client_socket << "isDatabaseClear";
 			client_socket >> reply;
-			cout << "We received this response from the server:\n\"" << reply << "\"\n";
+			cout << "We received this response from the server:" << endl << reply << endl;
 			i = 11;
 		}
 		catch(SocketException& e) {
