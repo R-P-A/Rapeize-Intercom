@@ -200,8 +200,6 @@ void CentralControl::createUser(unsigned long int currentUserId, string inputUse
 		throw e;
 	}
 
-	cout << "before canModifyDatabase " << !canModifyDatabase(currentUserId) << endl;
-	cout << "database clear " << !(databaseString == "" || databaseString == "\n") << endl;
 	// If the user isn't admin logged-in and the file is not empty, throw exception
 	if (!canModifyDatabase(currentUserId)) {
 		if (!(databaseString == "" || databaseString == "\n")) {
@@ -271,7 +269,7 @@ void CentralControl::updateUser(unsigned long int currentUserId, string inputUse
 	}
 
 	// If the user isn't admin logged-in, throw exception
-	if (!(canModifyDatabase(currentUserId) || (currentUserId == inputUser->getId()))) {
+	if ((!canModifyDatabase(currentUserId)) && (currentUserId != inputUser->getId())) {
 		delete inputUser;
 		throw "No permission to update user";
 	}
@@ -292,13 +290,12 @@ void CentralControl::updateUser(unsigned long int currentUserId, string inputUse
 		delete inputUser;
 		throw e;
 	}
-
-	if (currentUserId == inputUser->getId()) {
-		User* activeUser = (User*) activeUsers->search(inputUser->getId());
-		if (activeUser != NULL) {
-			activeUsers->update(inputUser);
-		}
+	
+	User* activeUser = (User*) activeUsers->search(inputUser->getId());
+	if (activeUser != NULL) {
+		activeUsers->update(inputUser);
 	}
+	
 }
 
 void CentralControl::deleteUser(unsigned long int currentUserId, unsigned long int id) {

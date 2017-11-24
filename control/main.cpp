@@ -13,6 +13,7 @@ void getActiveUsersHandler(CentralControl* control, string& output);
 void checkoutHandler(CentralControl* control, string& output, unsigned long int id, string& password);
 void openDoorHandler(CentralControl* control, string& output, unsigned long int id, string& password);
 void createUserHandler(CentralControl* control, string& output, unsigned long int id, string& password, string& newUserInput);
+void updateUserHandler(CentralControl* control, string& output, unsigned long int id, string& password, string& newUserInput);
 
 int main() {
 	CentralControl* control = new CentralControl();
@@ -22,9 +23,9 @@ int main() {
 		// Create the socket
 		ServerSocket server(8888);
 
-		int i = 0;
 		// This variable is just for testing, in the future this will be while(true)
-		while (i < 37) {
+		int i = 0;
+		while (i < 52) {
 			ServerSocket newSocket;
 			server.accept(newSocket);
 			cout << "Connected!" << endl;
@@ -87,6 +88,12 @@ string callHandler(CentralControl* control, string& input) {
 	if (command == "createUser") {
 		cout << "Got createUser\n";
 		createUserHandler(control, output, id, password, newUserInput);
+		return output;
+	}
+
+	if (command == "updateUser") {
+		cout << "Got updateUser\n";
+		updateUserHandler(control, output, id, password, newUserInput);
 		return output;
 	}
 
@@ -180,6 +187,7 @@ void createUserHandler(CentralControl* control, string& output, unsigned long in
 					output += "\n";
 					return;
 				}
+				output = "User created\n";
 			}
 			return;
 		}
@@ -188,6 +196,32 @@ void createUserHandler(CentralControl* control, string& output, unsigned long in
 		return;		
 	}
 	output = "User created\n";
+	return;
+}
+
+void updateUserHandler(CentralControl* control, string& output, unsigned long int id, string& password, string& newUserInput) {
+	try {
+		control->updateUser(id, newUserInput);
+	} catch (const char* e) {
+		if (strcmp(e, "No permission to update user") == 0) {
+			checkinHandler(control, output, id, password);
+			if (output == "Checked-in with success\n") {
+				try {
+					control->updateUser(id, newUserInput);
+				} catch (const char* e) {
+					output = e;
+					output += "\n";
+					return;
+				}
+				output = "User updated\n";
+			}
+			return;
+		}
+		output = e;
+		output += "\n";
+		return;		
+	}
+	output = "User updated\n";
 	return;
 }
 
@@ -223,4 +257,3 @@ void getCommandIdPass(string& input, string& command, unsigned long int& id, str
 	newUserInput = input.substr(initialPosition, finalPosition - initialPosition);
 	newUserInput += "\n";
 }
-
