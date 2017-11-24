@@ -314,7 +314,7 @@ void CentralControl::deleteUser(unsigned long int currentUserId, unsigned long i
 
 	// If the user isn't admin logged-in and isn't the same user, throw exception
 	if ((!canModifyDatabase(currentUserId)) && (currentUserId != targetId)) {
-		throw "No permission to read user";
+		throw "No permission to delete user";
 	}
 
 	size_t initialPosition, finalPosition;

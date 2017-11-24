@@ -101,7 +101,7 @@ class CentralControl {
 
 		/**
 		 *	Check if the user is admin (can modify the database).
-		 *	@return Whether the user is admin.
+		 *	@return Whether the user is admin and if he is checked-in.
 		 */
 		bool canModifyDatabase(unsigned long int id);
 

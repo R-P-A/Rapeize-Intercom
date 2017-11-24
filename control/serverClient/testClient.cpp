@@ -11,7 +11,7 @@ void callServer(string& input) {
 	int i = 0;
 	while (i < 10) {
 		try {
-			ClientSocket client_socket("192.168.1.5", 8888);
+			ClientSocket client_socket("192.168.1.95", 8888);
 			string reply;
 			client_socket << input;
 			client_socket >> reply;
@@ -173,7 +173,10 @@ int main() {
 	cout << "Checkin successfully with already checked-in user 487" << endl;
 	input = "checkin,487,pass\n";
 	callServer(input);
-	cout << "Get all users successfully. The list has user 487." << endl;
+	cout << "Checkin successfully with user 123" << endl;
+	input = "checkin,123,456\n";
+	callServer(input);
+	cout << "Get all users successfully. The list has user 123 and 487." << endl;
 	input = "getActiveUsers,487,pass\n";
 	callServer(input);
 	cout << "------------------------------------------------------------" << endl << endl;
@@ -181,6 +184,9 @@ int main() {
 	cout << endl << "---------------------- Checkout block ----------------------" << endl;
 	cout << "Checkout successfully with user 487" << endl;
 	input = "checkout,487,pass\n";
+	callServer(input);
+	cout << "Checkout successfully with user 123" << endl;
+	input = "checkout,123,456\n";
 	callServer(input);
 	cout << "Get all users successfully. The list is empty." << endl;
 	input = "getActiveUsers,487,pass\n";
@@ -229,6 +235,45 @@ int main() {
 	callServer(input);
 	cout << "Get all users successfully. The list has user 487." << endl;
 	input = "getActiveUsers,487,pass\n";
+	callServer(input);
+	cout << "Checkout successfully with user 487" << endl;
+	input = "checkout,487,pass\n";
+	callServer(input);
+	cout << "------------------------------------------------------------" << endl << endl;
+
+	cout << endl << "-------------------- Delete user block ---------------------" << endl;
+	cout << "Try to delete user 837 which doesn't exist with user 487 before checking in (in case of server failure)" << endl;
+	input = "deleteUser,487,pass,837\n";
+	callServer(input);
+	cout << "Try to delete user 487 with user 123 which isn't admin before checking in (in case of server failure)" << endl;
+	input = "deleteUser,123,456,487\n";
+	callServer(input);
+	cout << "Get all users successfully. The list has user 123 and 487." << endl;
+	input = "getActiveUsers,487,pass\n";
+	callServer(input);
+	cout << "Delete user 123 successfully with user 487" << endl;
+	input = "deleteUser,487,pass,123\n";
+	callServer(input);
+	cout << "Checkout successfully with user 123" << endl;
+	input = "checkout,123,456\n";
+	callServer(input);
+	cout << "Try to checkin with user 123. This will fail because user don't exist anymore" << endl;
+	input = "checkin,123,456\n";
+	callServer(input);
+	cout << "Get all users successfully. The list has user 487." << endl;
+	input = "getActiveUsers,487,pass\n";
+	callServer(input);
+	cout << "Create successfully user 123 again" << endl;
+	input = "createUser,487,pass,123,456,0,Rafael,+554898888-8888,rafael@alevato.com,Sunday,Saturday,08:30,23:30\n";
+	callServer(input);
+	cout << "Delete user 123 successfully with user 123" << endl;
+	input = "deleteUser,123,456,123\n";
+	callServer(input);
+	cout << "Delete user 487 successfully with user 487" << endl;
+	input = "deleteUser,487,pass,487\n";
+	callServer(input);
+	cout << "Create successfully first user 487 again" << endl;
+	input = "createUser,487,pass,487,pass,1,John,+554898888-8888,john@doe.com,Sunday,Saturday,08:30,23:30\n";
 	callServer(input);
 	cout << "------------------------------------------------------------" << endl << endl;
 

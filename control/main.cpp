@@ -15,6 +15,7 @@ void openDoorHandler(CentralControl* control, string& output, unsigned long int 
 void createUserHandler(CentralControl* control, string& output, unsigned long int id, string& password, string& newUserInput);
 void readUserHandler(CentralControl* control, string& output, unsigned long int id, string& password, unsigned long int targetId);
 void updateUserHandler(CentralControl* control, string& output, unsigned long int id, string& password, string& newUserInput);
+void deleteUserHandler(CentralControl* control, string& output, unsigned long int id, string& password, unsigned long int targetId);
 
 int main() {
 	CentralControl* control = new CentralControl();
@@ -26,7 +27,7 @@ int main() {
 
 		// This variable is just for testing, in the future this will be while(true)
 		int i = 0;
-		while (i < 60) {
+		while (i < 74) {
 			ServerSocket newSocket;
 			server.accept(newSocket);
 			cout << "Connected!" << endl;
@@ -104,6 +105,12 @@ string callHandler(CentralControl* control, string& input) {
 		return output;
 	}
 
+	if (command == "deleteUser") {
+		cout << "Got deleteUser\n";
+		deleteUserHandler(control, output, id, password, targetId);
+		return output;
+	}
+
 	output = "Wrong command\n";
 	return output;
 }
@@ -160,7 +167,12 @@ void checkinHandler(CentralControl* control, string& output, unsigned long int i
 		control->checkin(id, password);
 	} catch (const char* e) {
 		if (strcmp(e, "Id already exists") == 0) {
-			output = "Checked-in with success\n";
+			output = "Checked-in with success,";
+			if (control->canModifyDatabase(id)) {
+				output += "admin\n";
+			} else {
+				output += "user\n";
+			}
 			cout << "User already is checked-in\n";
 			return;
 		}
@@ -168,7 +180,12 @@ void checkinHandler(CentralControl* control, string& output, unsigned long int i
 		output += "\n";
 		return;
 	}
-	output = "Checked-in with success\n";
+	output = "Checked-in with success,";
+	if (control->canModifyDatabase(id)) {
+		output += "admin\n";
+	} else {
+		output += "user\n";
+	}
 	return;
 }
 
@@ -188,7 +205,7 @@ void checkoutHandler(CentralControl* control, string& output, unsigned long int 
 		control->checkout(id);
 	} catch (const char* e) {
 		checkinHandler(control, output, id, password);
-		if (output == "Checked-in with success\n") {
+		if ((output == "Checked-in with success,admin\n") || (output == "Checked-in with success,user\n")) {
 			try {
 				control->checkout(id);
 			} catch (const char* e) {
@@ -210,7 +227,7 @@ void openDoorHandler(CentralControl* control, string& output, unsigned long int 
 		control->openDoor(id);
 	} catch (const char* e) {
 		checkinHandler(control, output, id, password);
-		if (output == "Checked-in with success\n") {
+		if ((output == "Checked-in with success,admin\n") || (output == "Checked-in with success,user\n")) {
 			try {
 				control->openDoor(id);
 			} catch (const char* e) {
@@ -233,7 +250,7 @@ void createUserHandler(CentralControl* control, string& output, unsigned long in
 	} catch (const char* e) {
 		if (strcmp(e, "No permission to create user") == 0) {
 			checkinHandler(control, output, id, password);
-			if (output == "Checked-in with success\n") {
+			if ((output == "Checked-in with success,admin\n") || (output == "Checked-in with success,user\n")) {
 				try {
 					control->createUser(id, newUserInput);
 				} catch (const char* e) {
@@ -257,20 +274,22 @@ void readUserHandler(CentralControl* control, string& output, unsigned long int 
 	try {
 		output = control->readUser(id, targetId);
 	} catch (const char* e) {
-		checkinHandler(control, output, id, password);
-		if (output == "Checked-in with success\n") {
-			try {
-				output = control->readUser(id, targetId);
-			} catch (const char* e) {
-				output = e;
-				output += "\n";
+		if (strcmp(e, "No permission to read user") == 0) {
+			checkinHandler(control, output, id, password);
+			if ((output == "Checked-in with success,admin\n") || (output == "Checked-in with success,user\n")) {
+				try {
+					output = control->readUser(id, targetId);
+				} catch (const char* e) {
+					output = e;
+					output += "\n";
+					return;
+				}
 				return;
 			}
-			return;
 		}
 		output = e;
 		output += "\n";
-		return;
+		return;	
 	}
 	return;
 }
@@ -281,7 +300,7 @@ void updateUserHandler(CentralControl* control, string& output, unsigned long in
 	} catch (const char* e) {
 		if (strcmp(e, "No permission to update user") == 0) {
 			checkinHandler(control, output, id, password);
-			if (output == "Checked-in with success\n") {
+			if ((output == "Checked-in with success,admin\n") || (output == "Checked-in with success,user\n")) {
 				try {
 					control->updateUser(id, newUserInput);
 				} catch (const char* e) {
@@ -298,5 +317,31 @@ void updateUserHandler(CentralControl* control, string& output, unsigned long in
 		return;		
 	}
 	output = "User updated\n";
+	return;
+}
+
+void deleteUserHandler(CentralControl* control, string& output, unsigned long int id, string& password, unsigned long int targetId) {
+	try {
+		control->deleteUser(id, targetId);
+	} catch (const char* e) {
+		if (strcmp(e, "No permission to delete user") == 0) {
+			checkinHandler(control, output, id, password);
+			if ((output == "Checked-in with success,admin\n") || (output == "Checked-in with success,user\n")) {
+				try {
+					control->deleteUser(id, targetId);
+				} catch (const char* e) {
+					output = e;
+					output += "\n";
+					return;
+				}
+				output = "User deleted\n";
+			}
+			return;
+		}
+		output = e;
+		output += "\n";
+		return;		
+	}
+	output = "User deleted\n";
 	return;
 }
