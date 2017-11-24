@@ -7,11 +7,12 @@ using namespace std;
 
 // Functions declarations
 string callHandler(CentralControl* control, string& input);
-void getCommandIdPass(string& input, string& command, unsigned long int& id, string& password);
+void getCommandIdPass(string& input, string& command, unsigned long int& id, string& password, string& newUserInput);
 void checkinHandler(CentralControl* control, string& output, unsigned long int id, string& password);
 void getActiveUsersHandler(CentralControl* control, string& output);
 void checkoutHandler(CentralControl* control, string& output, unsigned long int id, string& password);
 void openDoorHandler(CentralControl* control, string& output, unsigned long int id, string& password);
+void createUserHandler(CentralControl* control, string& output, unsigned long int id, string& password, string& newUserInput);
 
 int main() {
 	CentralControl* control = new CentralControl();
@@ -23,7 +24,7 @@ int main() {
 
 		int i = 0;
 		// This variable is just for testing, in the future this will be while(true)
-		while (i < 23) {
+		while (i < 34) {
 			ServerSocket newSocket;
 			server.accept(newSocket);
 			cout << "Connected!" << endl;
@@ -48,12 +49,11 @@ int main() {
 }
 
 string callHandler(CentralControl* control, string& input) {
-	
-	string output, command, password;
+	string output, command, password, newUserInput;
 	unsigned long int id;
 
 	try {
-		getCommandIdPass(input, command, id, password);
+		getCommandIdPass(input, command, id, password, newUserInput);
 	} catch (const char* e) {
 		output = e;
 		output += "\n";
@@ -81,6 +81,12 @@ string callHandler(CentralControl* control, string& input) {
 	if (command == "openDoor") {
 		cout << "Got openDoor\n";
 		openDoorHandler(control, output, id, password);
+		return output;
+	}
+
+	if (command == "createUser") {
+		cout << "Got createUser\n";
+		createUserHandler(control, output, id, password, newUserInput);
 		return output;
 	}
 
@@ -160,7 +166,32 @@ void openDoorHandler(CentralControl* control, string& output, unsigned long int 
 	return;
 }
 
-void getCommandIdPass(string& input, string& command, unsigned long int& id, string& password) {
+void createUserHandler(CentralControl* control, string& output, unsigned long int id, string& password, string& newUserInput) {
+	try {
+		control->createUser(id, newUserInput);
+	} catch (const char* e) {
+		if (strcmp(e, "No permission to create user") == 0) {
+			checkinHandler(control, output, id, password);
+			if (output == "Checked-in with success\n") {
+				try {
+					control->createUser(id, newUserInput);
+				} catch (const char* e) {
+					output = e;
+					output += "\n";
+					return;
+				}
+			}
+			return;
+		}
+		output = e;
+		output += "\n";
+		return;		
+	}
+	output = "User created\n";
+	return;
+}
+
+void getCommandIdPass(string& input, string& command, unsigned long int& id, string& password, string& newUserInput) {
 	size_t initialPosition, finalPosition;
 	
 	finalPosition = input.find(',', 0);
@@ -181,7 +212,15 @@ void getCommandIdPass(string& input, string& command, unsigned long int& id, str
 	}
 
 	initialPosition = finalPosition + 1;
-	finalPosition = input.find(',', finalPosition);
+	finalPosition = input.find(',', initialPosition);
 	password = input.substr(initialPosition, finalPosition - initialPosition);
+	if (finalPosition == string::npos) {
+		return;
+	}
+
+	initialPosition = finalPosition + 1;
+	finalPosition = input.find('\n', initialPosition);
+	newUserInput = input.substr(initialPosition, finalPosition - initialPosition);
+	newUserInput += "\n";
 }
 
