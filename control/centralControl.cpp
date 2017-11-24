@@ -22,6 +22,8 @@ User* CentralControl::stringToUser(string& dbLine) {
 	size_t prevPosition;
 	size_t position;
 
+	// This function is divided in blocks. Each block finds the next value and save on the appropriate place.
+
 	position = dbLine.find(',');
 	if (position == string::npos) {
 		output = NULL;
@@ -140,6 +142,7 @@ void CentralControl::searchUserInDatabase(string& databaseString, size_t& initia
 	string idString = to_string(id);
 	initialPosition = 0;
 	while (true) {
+		// Seach in each line of the database for the user id.
 		finalPosition = databaseString.find(",", initialPosition);
 		if (idString == databaseString.substr(initialPosition, (finalPosition - initialPosition))) {
 			finalPosition = databaseString.find("\n", initialPosition);
@@ -200,12 +203,14 @@ void CentralControl::createUser(unsigned long int currentUserId, string inputUse
 		throw e;
 	}
 
-	// If the user isn't admin logged-in and the file is not empty, throw exception
+	// If the user isn't admin checked-in.
 	if (!canModifyDatabase(currentUserId)) {
+		// If the file is not empty and the user isn't admin checked-in, throw exception.
 		if (!(databaseString == "" || databaseString == "\n")) {
 			delete inputUser;
 			throw "No permission to create user";
 		}
+		// If the file is empty and the user to be created isn't admin, throw exception.
 		if (!inputUser->getIsAdmin()) {
 			delete inputUser;
 			throw "First user isn't admin";
@@ -239,7 +244,7 @@ string CentralControl::readUser(unsigned long int currentUserId, unsigned long i
 		throw e;
 	}
 
-	// If the user isn't admin logged-in and isn't the same user, throw exception
+	// If the user isn't admin checked-in and the target user isn't the user itself, throw exception.
 	if ((!canModifyDatabase(currentUserId)) && (currentUserId != targetId)) {
 		throw "No permission to read user";
 	}
@@ -273,7 +278,7 @@ void CentralControl::updateUser(unsigned long int currentUserId, string inputUse
 		throw e;
 	}
 
-	// If the user isn't admin logged-in and isn't the same user, throw exception
+	// If the user isn't admin checked-in and the target user isn't the user itself, throw exception.
 	if ((!canModifyDatabase(currentUserId)) && (currentUserId != inputUser->getId())) {
 		delete inputUser;
 		throw "No permission to update user";
@@ -312,7 +317,7 @@ void CentralControl::deleteUser(unsigned long int currentUserId, unsigned long i
 		throw e;
 	}
 
-	// If the user isn't admin logged-in and isn't the same user, throw exception
+	// If the user isn't admin checked-in and the target user isn't the user itself, throw exception.
 	if ((!canModifyDatabase(currentUserId)) && (currentUserId != targetId)) {
 		throw "No permission to delete user";
 	}

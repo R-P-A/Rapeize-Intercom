@@ -1,3 +1,13 @@
+/** 
+ *	@author  Rafael Pintar Alevato
+ *	@date    23/11/2017
+ *	@version 1.0 
+ *	
+ *	Before running this test, please set the while(true) on server to while(i<74) and increase i for each call.
+ *	This way the CentralControl will be deleted.
+ *
+ */
+
 #include <iostream>
 #include <string>
 #include <thread>
