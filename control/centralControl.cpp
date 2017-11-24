@@ -229,7 +229,7 @@ void CentralControl::createUser(unsigned long int currentUserId, string inputUse
 	throw "User already exists";
 }
 
-string CentralControl::readUser(unsigned long int id) {
+string CentralControl::readUser(unsigned long int currentUserId, unsigned long int targetId) {
 	string databaseString;
 	string userString;
 
@@ -239,14 +239,19 @@ string CentralControl::readUser(unsigned long int id) {
 		throw e;
 	}
 
+	// If the user isn't admin logged-in and isn't the same user, throw exception
+	if ((!canModifyDatabase(currentUserId)) && (currentUserId != targetId)) {
+		throw "No permission to read user";
+	}
+
 	size_t initialPosition, finalPosition;
 	try {
-		searchUserInDatabase(databaseString, initialPosition, finalPosition, id);
+		searchUserInDatabase(databaseString, initialPosition, finalPosition, targetId);
 	} catch (const char* e) {
 		throw e;
 	}
-
 	userString = databaseString.substr(initialPosition, (finalPosition - initialPosition + 1));
+	
 	return userString;
 }
 
@@ -268,7 +273,7 @@ void CentralControl::updateUser(unsigned long int currentUserId, string inputUse
 		throw e;
 	}
 
-	// If the user isn't admin logged-in, throw exception
+	// If the user isn't admin logged-in and isn't the same user, throw exception
 	if ((!canModifyDatabase(currentUserId)) && (currentUserId != inputUser->getId())) {
 		delete inputUser;
 		throw "No permission to update user";
@@ -290,7 +295,7 @@ void CentralControl::updateUser(unsigned long int currentUserId, string inputUse
 		delete inputUser;
 		throw e;
 	}
-	
+
 	User* activeUser = (User*) activeUsers->search(inputUser->getId());
 	if (activeUser != NULL) {
 		activeUsers->update(inputUser);
@@ -298,12 +303,8 @@ void CentralControl::updateUser(unsigned long int currentUserId, string inputUse
 	
 }
 
-void CentralControl::deleteUser(unsigned long int currentUserId, unsigned long int id) {
+void CentralControl::deleteUser(unsigned long int currentUserId, unsigned long int targetId) {
 	string databaseString;
-
-	if (id == currentUserId) {
-		throw "Can't delete current user";
-	}
 
 	try {
 		readFile(databaseString, userDatabaseFileName);
@@ -311,14 +312,14 @@ void CentralControl::deleteUser(unsigned long int currentUserId, unsigned long i
 		throw e;
 	}
 
-	// If the user isn't admin logged-in, throw exception
-	if (!canModifyDatabase(currentUserId)) {
-		throw "No permission to delete user";
+	// If the user isn't admin logged-in and isn't the same user, throw exception
+	if ((!canModifyDatabase(currentUserId)) && (currentUserId != targetId)) {
+		throw "No permission to read user";
 	}
 
 	size_t initialPosition, finalPosition;
 	try {
-		searchUserInDatabase(databaseString, initialPosition, finalPosition, id);
+		searchUserInDatabase(databaseString, initialPosition, finalPosition, targetId);
 	} catch (const char* e) {
 		throw e;
 	}
@@ -389,7 +390,7 @@ void CentralControl::checkin(unsigned long int currentUserId, string currentUser
 	unsigned int beginWeekDay, endWeekDay, currentWeekDay;
 
 	try {
-		databaseUser = readUser(currentUserId);
+		databaseUser = readUser(currentUserId, currentUserId);
 	} catch (const char* e) {
 		throw e;
 	}

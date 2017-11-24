@@ -120,16 +120,18 @@ class CentralControl {
 		/**
 		 *	Read a user in the database and return it.
 		 *	@param id The id of the user to be read.
+		 *	@param currentUserId The id of the user trying to read the database.
 		 *	@return The user in the format "id,password,isAdmin,name,phone,email,beginWeekDay,endWeekDay,beginTime,endTime".
 		 *	@throw const char* "Couldn't open the file".
+		 *	@throw const char* "No permission to read user"
 		 *	@throw const char* "User not found".
 		 */
-		string readUser(unsigned long int id);
+		string readUser(unsigned long int currentUserId, unsigned long int targetId);
 
 		/**
 		 *	Update a user that already exists in the database.
 		 *	@param inputUserString The user updated data in the format "id,password,isAdmin,name,phone,email,beginWeekDay,endWeekDay,beginTime,endTime".
-		 *	@param currentUserIdPass The id and pass of the user trying to modify the database. Format "id,password".
+		 *	@param currentUserId The id of the user trying to modify the database.
 		 *	@throw const char* "Input line in the wrong format".
 		 *	@throw const char* "Couldn't open the file".
 		 *	@throw const char* "No permission to update user".
@@ -143,11 +145,10 @@ class CentralControl {
 		 *	@param currentUserId The id of the user trying to modify the database.
 		 *	@param id The id of the user to be deleted.
 		 *	@throw const char* "Couldn't open the file".
-		 *	@throw const char* "Can't delete current user".
 		 *	@throw const char* "No permission to delete user".
 		 *	@throw const char* "User not found".
 		 */
-		void deleteUser(unsigned long int currentUserId, unsigned long int id);
+		void deleteUser(unsigned long int currentUserId, unsigned long int targetId);
 
 		/**
 		 *	Checkin with the current user accessing it.

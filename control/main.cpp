@@ -7,12 +7,13 @@ using namespace std;
 
 // Functions declarations
 string callHandler(CentralControl* control, string& input);
-void getCommandIdPass(string& input, string& command, unsigned long int& id, string& password, string& newUserInput);
+unsigned long int getCommandIdPassInput(string& input, string& command, unsigned long int& id, string& password, string& newUserInput);
 void checkinHandler(CentralControl* control, string& output, unsigned long int id, string& password);
 void getActiveUsersHandler(CentralControl* control, string& output);
 void checkoutHandler(CentralControl* control, string& output, unsigned long int id, string& password);
 void openDoorHandler(CentralControl* control, string& output, unsigned long int id, string& password);
 void createUserHandler(CentralControl* control, string& output, unsigned long int id, string& password, string& newUserInput);
+void readUserHandler(CentralControl* control, string& output, unsigned long int id, string& password, unsigned long int targetId);
 void updateUserHandler(CentralControl* control, string& output, unsigned long int id, string& password, string& newUserInput);
 
 int main() {
@@ -25,7 +26,7 @@ int main() {
 
 		// This variable is just for testing, in the future this will be while(true)
 		int i = 0;
-		while (i < 52) {
+		while (i < 60) {
 			ServerSocket newSocket;
 			server.accept(newSocket);
 			cout << "Connected!" << endl;
@@ -51,10 +52,10 @@ int main() {
 
 string callHandler(CentralControl* control, string& input) {
 	string output, command, password, newUserInput;
-	unsigned long int id;
+	unsigned long int id, targetId;
 
 	try {
-		getCommandIdPass(input, command, id, password, newUserInput);
+		targetId = getCommandIdPassInput(input, command, id, password, newUserInput);
 	} catch (const char* e) {
 		output = e;
 		output += "\n";
@@ -91,6 +92,12 @@ string callHandler(CentralControl* control, string& input) {
 		return output;
 	}
 
+	if (command == "readUser") {
+		cout << "Got readUser\n";
+		readUserHandler(control, output, id, password, targetId);
+		return output;
+	}
+
 	if (command == "updateUser") {
 		cout << "Got updateUser\n";
 		updateUserHandler(control, output, id, password, newUserInput);
@@ -99,6 +106,53 @@ string callHandler(CentralControl* control, string& input) {
 
 	output = "Wrong command\n";
 	return output;
+}
+
+unsigned long int getCommandIdPassInput(string& input, string& command, unsigned long int& id, string& password, string& newUserInput) {
+	size_t initialPosition, finalPosition;
+	unsigned long int targetId = 0;
+	
+	finalPosition = input.find(',', 0);
+	if (finalPosition == string::npos) {
+		throw "Missing id and password";
+	}
+	command = input.substr(0, finalPosition);
+
+	initialPosition = finalPosition + 1;
+	finalPosition = input.find(',', initialPosition);
+	if (finalPosition == string::npos) {
+		throw "Missing password";
+	}
+	try {
+		id = stoul(input.substr(initialPosition, finalPosition - initialPosition));
+	} catch (...) {
+		throw "Wrong id input";
+	}
+
+	initialPosition = finalPosition + 1;
+	finalPosition = input.find(',', initialPosition);
+	if (finalPosition == string::npos) {
+		size_t endlPosition = input.find('\n', initialPosition);
+		if (endlPosition != finalPosition) {
+			password = input.substr(initialPosition, endlPosition - initialPosition);
+			return 0;
+		}
+		password = input.substr(initialPosition, finalPosition - initialPosition);
+		return 0;
+	}
+	password = input.substr(initialPosition, finalPosition - initialPosition);
+
+	initialPosition = finalPosition + 1;
+	finalPosition = input.find('\n', initialPosition);
+	newUserInput = input.substr(initialPosition, finalPosition - initialPosition);
+	try {
+		targetId = stoul(newUserInput);
+	} catch (...) {
+		newUserInput += "\n";
+		return 0;
+	}
+	newUserInput += "\n";
+	return targetId;
 }
 
 void checkinHandler(CentralControl* control, string& output, unsigned long int id, string& password) {
@@ -199,6 +253,28 @@ void createUserHandler(CentralControl* control, string& output, unsigned long in
 	return;
 }
 
+void readUserHandler(CentralControl* control, string& output, unsigned long int id, string& password, unsigned long int targetId) {
+	try {
+		output = control->readUser(id, targetId);
+	} catch (const char* e) {
+		checkinHandler(control, output, id, password);
+		if (output == "Checked-in with success\n") {
+			try {
+				output = control->readUser(id, targetId);
+			} catch (const char* e) {
+				output = e;
+				output += "\n";
+				return;
+			}
+			return;
+		}
+		output = e;
+		output += "\n";
+		return;
+	}
+	return;
+}
+
 void updateUserHandler(CentralControl* control, string& output, unsigned long int id, string& password, string& newUserInput) {
 	try {
 		control->updateUser(id, newUserInput);
@@ -223,37 +299,4 @@ void updateUserHandler(CentralControl* control, string& output, unsigned long in
 	}
 	output = "User updated\n";
 	return;
-}
-
-void getCommandIdPass(string& input, string& command, unsigned long int& id, string& password, string& newUserInput) {
-	size_t initialPosition, finalPosition;
-	
-	finalPosition = input.find(',', 0);
-	command = input.substr(0, finalPosition);
-	if (finalPosition == string::npos) {
-		throw "Missing id and password";
-	}
-
-	initialPosition = finalPosition + 1;
-	finalPosition = input.find(',', initialPosition);
-	if (finalPosition == string::npos) {
-		throw "Missing password";
-	}
-	try {
-		id = stoul(input.substr(initialPosition, finalPosition - initialPosition));
-	} catch (...) {
-		throw "Wrong id input";
-	}
-
-	initialPosition = finalPosition + 1;
-	finalPosition = input.find(',', initialPosition);
-	password = input.substr(initialPosition, finalPosition - initialPosition);
-	if (finalPosition == string::npos) {
-		return;
-	}
-
-	initialPosition = finalPosition + 1;
-	finalPosition = input.find('\n', initialPosition);
-	newUserInput = input.substr(initialPosition, finalPosition - initialPosition);
-	newUserInput += "\n";
 }
