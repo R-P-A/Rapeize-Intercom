@@ -1,14 +1,14 @@
 CXX = g++
 CXXFLAGS = -Wall
-SRCS = centralControl.cpp dateTime.cpp model.cpp myio.cpp sortedList.cpp user.cpp testCentralControl.cpp
+SRCS = centralControl.cpp dateTime.cpp model.cpp myio.cpp sortedList.cpp user.cpp socket.cpp serverSocket.cpp control.cpp
 OBJS = ${SRCS:.cpp=.o}
 
 all: windows
 
-windows: $(OBJS) node.h
+windows: $(OBJS) $(OBJS) node.h socketException.h
 	$(CXX) $(CXXFLAGS) $(OBJS) -o main.exe
 
-linux: $(OBJS) node.h
+linux: $(OBJS) $(OBJS) node.h socketException.h
 	$(CXX) $(CXXFLAGS) $(OBJS) -o main.exe
 	chmod +x main.exe
 
@@ -30,7 +30,13 @@ sortedList: $@.cpp $@.h
 user: $@.cpp $@.h
 	$(CXX) $(CXXFLAGS) $@.cpp -c
 
-testCentralControl: $@.cpp $(OBJS)
+socket: $@.cpp $@.h
+	$(CXX) $(CXXFLAGS) $@.cpp -c
+
+serverSocket: $@.cpp $@.h
+	$(CXX) $(CXXFLAGS) $@.cpp -c
+
+control: $@.cpp $(OBJS)
 	$(CXX) $(CXXFLAGS) $@.cpp -c
 
 clean:

@@ -43,15 +43,6 @@ class CentralControl {
 		string userDatabaseFileName;
 
 		/**
-		 *	Transform a string with id and password into a number for id and string for password.
-		 *	@param inputUserIdPass String which contains id and password in the following format "id,password".
-		 *	@param inputUserId Variable to save the id.
-		 *	@param inputUserPass Variable to save the password.
-		 *	@throw const char* "Input line in the wrong format".
-		 */
-		void getUserIdPass(string& inputUserIdPass, unsigned long int& inputUserId, string& inputUserPass);
-
-		/**
 		 *	Transform a string with user data in csv format into a user.
 		 *	@param dbLine User passed in the format "id,password,isAdmin,name,phone,email,beginWeekDay,endWeekDay,beginTime,endTime".
 		 *	@return The pointer to the user created.
@@ -110,7 +101,7 @@ class CentralControl {
 
 		/**
 		 *	Check if the user is admin (can modify the database).
-		 *	@return Whether the user is admin.
+		 *	@return Whether the user is admin and if he is checked-in.
 		 */
 		bool canModifyDatabase(unsigned long int id);
 
@@ -124,74 +115,75 @@ class CentralControl {
 		 *	@throw const char* "First user isn't admin".
 		 *	@throw const char* "User already exists".
 		 */
-		void createUser(string inputUserString, string currentUserIdPass);
+		void createUser(unsigned long int currentUserId, string inputUserString);
 
 		/**
 		 *	Read a user in the database and return it.
 		 *	@param id The id of the user to be read.
+		 *	@param currentUserId The id of the user trying to read the database.
 		 *	@return The user in the format "id,password,isAdmin,name,phone,email,beginWeekDay,endWeekDay,beginTime,endTime".
 		 *	@throw const char* "Couldn't open the file".
+		 *	@throw const char* "No permission to read user"
 		 *	@throw const char* "User not found".
 		 */
-		string readUser(unsigned long int id);
+		string readUser(unsigned long int currentUserId, unsigned long int targetId);
 
 		/**
 		 *	Update a user that already exists in the database.
 		 *	@param inputUserString The user updated data in the format "id,password,isAdmin,name,phone,email,beginWeekDay,endWeekDay,beginTime,endTime".
-		 *	@param currentUserIdPass The id and pass of the user trying to modify the database. Format "id,password".
+		 *	@param currentUserId The id of the user trying to modify the database.
 		 *	@throw const char* "Input line in the wrong format".
 		 *	@throw const char* "Couldn't open the file".
 		 *	@throw const char* "No permission to update user".
 		 *	@throw const char* "User not found".
 		 */
-		void updateUser(string inputUserString, string currentUserIdPass);
+		void updateUser(unsigned long int currentUserId, string inputUserString);
 
 		/**
 		 *	Delete a user that already exists in the database.
 		 *	@param id The user id to be deleted.
-		 *	@param currentUserIdPass The id and pass of the user trying to modify the database. Format "id,password".
-		 *	@throw const char* "Input line in the wrong format".
+		 *	@param currentUserId The id of the user trying to modify the database.
+		 *	@param id The id of the user to be deleted.
 		 *	@throw const char* "Couldn't open the file".
-		 *	@throw const char* "Can't delete current user".
 		 *	@throw const char* "No permission to delete user".
 		 *	@throw const char* "User not found".
 		 */
-		void deleteUser(unsigned long int id, string currentUserIdPass);
+		void deleteUser(unsigned long int currentUserId, unsigned long int targetId);
 
 		/**
 		 *	Checkin with the current user accessing it.
-		 *	@param currentUserIdPass The id and pass of the user trying to checkin. Format "id,password".
-		 *	@throw const char* "Input line in the wrong format".
+		 *	@param currentUserId The id of the user trying to checkin.
+		 *	@param currentUserPass The password of the user trying to checkin.
 		 *	@throw const char* "Couldn't open the file".
 		 *	@throw const char* "User not found".
-		 *	@throw const char* "Password do not match".
-		 */
-		void checkin(string currentUserIdPass);
-
-		/**
-		 *	Checkin with the current user accessing it.
-		 *	@param currentUserIdPass The id and pass of the user trying to checkout. Format "id,password".
 		 *	@throw const char* "Input line in the wrong format".
-		 *	@throw const char* "Id not found".
 		 *	@throw const char* "Password do not match".
 		 *	@throw const char* "Wrong weekDay input".
 		 *	@throw const char* "Current time before beginning time";
 		 *	@throw const char* "Current time after ending time";
 		 *	@throw const char* "Current day of the week before begin week day";
 		 *	@throw const char* "Current day of the week after end week day";
+		 *	@throw const char* "Inserted NULL Model".
+		 *	@throw const char* "Id already exists".
 		 */
-		void checkout(string currentUserIdPass);
+		void checkin(unsigned long int currentUserId, string currentUserPass);
 
 		/**
 		 *	Checkin with the current user accessing it.
-		 *	@param currentUserIdPass The id and pass of the user trying to open the door. Format "id,password".
-		 *	@throw const char* "Input line in the wrong format".
-		 *	@throw const char* "User not checked-in".
+		 *	@param currentUserId The id of the user trying to checkout.
+		 *	@throw const char* "Id not found".
 		 */
-		unsigned long int openDoor(string currentUserIdPass);
+		void checkout(unsigned long int currentUserId);
 
 		/**
-		 *	Returns a list with all checked-in users in csv format.
+		 *	Checkin with the current user accessing it.
+		 *	@param currentUserId The id of the user trying to open the door.
+		 *	@throw const char* "User not checked-in".
+		 */
+		void openDoor(unsigned long int currentUserId);
+
+		/**
+		 *	Returns a list with all checked-in users in csv format (id,name,phone,email).
 		 *	@throw const char* "Conversion from string to unsigned long int not valid".
 		 *	@throw const char* "Active Users list corrupted".
 		 */

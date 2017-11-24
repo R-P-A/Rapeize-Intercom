@@ -59,7 +59,6 @@ class Socket {
 		bool is_valid() const {
 			return mSock != -1;
 		}
-
 };
 
 #endif	// SOCKET

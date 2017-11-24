@@ -16,32 +16,13 @@ CentralControl::~CentralControl() {
 	delete activeUsers;
 }
 
-void CentralControl::getUserIdPass(string& inputUserIdPass, unsigned long int& inputUserId, string& inputUserPass) {
-	size_t position;
-	size_t prevPosition;
-	string tempId;
-
-	position = inputUserIdPass.find(',');
-	if (position == string::npos) {
-		throw "Input line in the wrong format";
-	}
-	tempId = inputUserIdPass.substr(0, position);
-	try {
-		inputUserId = stoul(tempId);
-	} catch (const char* e) {
-		throw "Input line in the wrong format";
-	}
-
-	prevPosition = position + 1;
-	position = inputUserIdPass.find(',', prevPosition);
-	inputUserPass = inputUserIdPass.substr(prevPosition, position - prevPosition);
-}
-
 User* CentralControl::stringToUser(string& dbLine) {
 	User* output = new User();
 	string buffer;
 	size_t prevPosition;
 	size_t position;
+
+	// This function is divided in blocks. Each block finds the next value and save on the appropriate place.
 
 	position = dbLine.find(',');
 	if (position == string::npos) {
@@ -51,7 +32,7 @@ User* CentralControl::stringToUser(string& dbLine) {
 	buffer = dbLine.substr(0, position);
 	try {
 		output->setId(stoul(buffer));
-	} catch (const char* e) {
+	} catch (...) {
 		output = NULL;
 		throw "Input line in the wrong format";
 	}
@@ -159,15 +140,19 @@ User* CentralControl::stringToUser(string& dbLine) {
 
 void CentralControl::searchUserInDatabase(string& databaseString, size_t& initialPosition, size_t& finalPosition, unsigned long int id) {
 	string idString = to_string(id);
-	initialPosition = databaseString.find(idString);
-	if (initialPosition == string::npos) {
-		throw "User not found";
-	}
-	finalPosition = databaseString.find(",", initialPosition);
-	if (idString == databaseString.substr(initialPosition, (finalPosition - initialPosition))) {
-		finalPosition = databaseString.find("\n", initialPosition);
-	} else {
-		throw "User not found";
+	initialPosition = 0;
+	while (true) {
+		// Seach in each line of the database for the user id.
+		finalPosition = databaseString.find(",", initialPosition);
+		if (idString == databaseString.substr(initialPosition, (finalPosition - initialPosition))) {
+			finalPosition = databaseString.find("\n", initialPosition);
+			return;
+		}
+		initialPosition = databaseString.find("\n", initialPosition);
+		if (initialPosition == string::npos) {
+			throw "User not found";
+		}
+		initialPosition++;
 	}
 }
 
@@ -200,17 +185,9 @@ bool CentralControl::canModifyDatabase(unsigned long int id) {
 	return tempUser->getIsAdmin();
 }
 
-void CentralControl::createUser(string inputUserString, string currentUserIdPass) {
+void CentralControl::createUser(unsigned long int currentUserId, string inputUserString) {
 	User* inputUser = NULL;
 	string databaseString;
-	unsigned long int currentUserId;
-	string currentUserPass;
-
-	try {
-		getUserIdPass(currentUserIdPass, currentUserId, currentUserPass);
-	} catch (const char* e) {
-		throw e;
-	}
 
 	try {
 		inputUser = stringToUser(inputUserString);
@@ -226,12 +203,14 @@ void CentralControl::createUser(string inputUserString, string currentUserIdPass
 		throw e;
 	}
 
-	// If the user isn't admin logged-in and the file is not empty, throw exception
+	// If the user isn't admin checked-in.
 	if (!canModifyDatabase(currentUserId)) {
+		// If the file is not empty and the user isn't admin checked-in, throw exception.
 		if (!(databaseString == "" || databaseString == "\n")) {
 			delete inputUser;
 			throw "No permission to create user";
 		}
+		// If the file is empty and the user to be created isn't admin, throw exception.
 		if (!inputUser->getIsAdmin()) {
 			delete inputUser;
 			throw "First user isn't admin";
@@ -255,7 +234,7 @@ void CentralControl::createUser(string inputUserString, string currentUserIdPass
 	throw "User already exists";
 }
 
-string CentralControl::readUser(unsigned long int id) {
+string CentralControl::readUser(unsigned long int currentUserId, unsigned long int targetId) {
 	string databaseString;
 	string userString;
 
@@ -265,28 +244,25 @@ string CentralControl::readUser(unsigned long int id) {
 		throw e;
 	}
 
+	// If the user isn't admin checked-in and the target user isn't the user itself, throw exception.
+	if ((!canModifyDatabase(currentUserId)) && (currentUserId != targetId)) {
+		throw "No permission to read user";
+	}
+
 	size_t initialPosition, finalPosition;
 	try {
-		searchUserInDatabase(databaseString, initialPosition, finalPosition, id);
+		searchUserInDatabase(databaseString, initialPosition, finalPosition, targetId);
 	} catch (const char* e) {
 		throw e;
 	}
-
 	userString = databaseString.substr(initialPosition, (finalPosition - initialPosition + 1));
+	
 	return userString;
 }
 
-void CentralControl::updateUser(string inputUserString, string currentUserIdPass) {
+void CentralControl::updateUser(unsigned long int currentUserId, string inputUserString) {
 	string databaseString;
 	User* inputUser = NULL;
-	unsigned long int currentUserId;
-	string currentUserPass;
-
-	try {
-		getUserIdPass(currentUserIdPass, currentUserId, currentUserPass);
-	} catch (const char* e) {
-		throw e;
-	}
 
 	try {
 		inputUser = stringToUser(inputUserString);
@@ -302,8 +278,8 @@ void CentralControl::updateUser(string inputUserString, string currentUserIdPass
 		throw e;
 	}
 
-	// If the user isn't admin logged-in, throw exception
-	if (!(canModifyDatabase(currentUserId) || (currentUserId == inputUser->getId()))) {
+	// If the user isn't admin checked-in and the target user isn't the user itself, throw exception.
+	if ((!canModifyDatabase(currentUserId)) && (currentUserId != inputUser->getId())) {
 		delete inputUser;
 		throw "No permission to update user";
 	}
@@ -325,28 +301,15 @@ void CentralControl::updateUser(string inputUserString, string currentUserIdPass
 		throw e;
 	}
 
-	if (currentUserId == inputUser->getId()) {
-		User* activeUser = (User*) activeUsers->search(inputUser->getId());
-		if (activeUser != NULL) {
-			activeUsers->update(inputUser);
-		}
+	User* activeUser = (User*) activeUsers->search(inputUser->getId());
+	if (activeUser != NULL) {
+		activeUsers->update(inputUser);
 	}
+	
 }
 
-void CentralControl::deleteUser(unsigned long int id, string currentUserIdPass) {
+void CentralControl::deleteUser(unsigned long int currentUserId, unsigned long int targetId) {
 	string databaseString;
-	unsigned long int currentUserId;
-	string currentUserPass;
-
-	try {
-		getUserIdPass(currentUserIdPass, currentUserId, currentUserPass);
-	} catch (const char* e) {
-		throw e;
-	}
-
-	if (id == currentUserId) {
-		throw "Can't delete current user";
-	}
 
 	try {
 		readFile(databaseString, userDatabaseFileName);
@@ -354,14 +317,14 @@ void CentralControl::deleteUser(unsigned long int id, string currentUserIdPass) 
 		throw e;
 	}
 
-	// If the user isn't admin logged-in, throw exception
-	if (!canModifyDatabase(currentUserId)) {
+	// If the user isn't admin checked-in and the target user isn't the user itself, throw exception.
+	if ((!canModifyDatabase(currentUserId)) && (currentUserId != targetId)) {
 		throw "No permission to delete user";
 	}
 
 	size_t initialPosition, finalPosition;
 	try {
-		searchUserInDatabase(databaseString, initialPosition, finalPosition, id);
+		searchUserInDatabase(databaseString, initialPosition, finalPosition, targetId);
 	} catch (const char* e) {
 		throw e;
 	}
@@ -411,7 +374,7 @@ unsigned long int CentralControl::timeStringToNumber(string timeString) {
 	}
 	try {		
 		hour = stoul(timeString.substr(0, position));
-	} catch (const char* e) {
+	} catch (...) {
 		throw "Input line in the wrong format";		
 	}
 
@@ -419,27 +382,20 @@ unsigned long int CentralControl::timeStringToNumber(string timeString) {
 	position = timeString.find('\n');
 	try {		
 		min = stoul(timeString.substr(prevPosition, position));
-	} catch (const char* e) {
+	} catch (...) {
 		throw "Input line in the wrong format";		
 	}
 
 	return hour*3600 + min*60;
 }
 
-void CentralControl::checkin(string currentUserIdPass) {
+void CentralControl::checkin(unsigned long int currentUserId, string currentUserPass) {
 	string databaseUser;
-	unsigned long int currentUserId, beginTimeSecs, endTimeSecs, currentTimeSecs;
-	string currentUserPass;
+	unsigned long int beginTimeSecs, endTimeSecs, currentTimeSecs;
 	unsigned int beginWeekDay, endWeekDay, currentWeekDay;
 
 	try {
-		getUserIdPass(currentUserIdPass, currentUserId, currentUserPass);
-	} catch (const char* e) {
-		throw e;
-	}
-
-	try {
-		databaseUser = readUser(currentUserId);
+		databaseUser = readUser(currentUserId, currentUserId);
 	} catch (const char* e) {
 		throw e;
 	}
@@ -477,25 +433,27 @@ void CentralControl::checkin(string currentUserIdPass) {
 		throw "Password do not match";
 	}
 
-	if (currentTimeSecs <= beginTimeSecs) {
+	if (currentTimeSecs < beginTimeSecs) {
 		delete checkinUser;
 		throw "Current time before beginning time";
 	}
 
-	if (currentTimeSecs >= endTimeSecs) {
+	if (currentTimeSecs > endTimeSecs) {
 		delete checkinUser;
 		throw "Current time after ending time";
 	}
 
-	if (currentWeekDay <= beginWeekDay) {
+	if (currentWeekDay < beginWeekDay) {
 		delete checkinUser;
 		throw "Current day of the week before begin week day";
 	}
 
-	if (currentWeekDay >= endWeekDay) {
+	if (currentWeekDay > endWeekDay) {
 		delete checkinUser;
 		throw "Current day of the week after end week day";
 	}
+
+	system("echo Door opened!\n");
 		
 	try {
 		activeUsers->insert(checkinUser);
@@ -503,13 +461,10 @@ void CentralControl::checkin(string currentUserIdPass) {
 		delete checkinUser;
 		throw e;
 	}
-	system("echo Door opened!\n");
 }
 
-void CentralControl::checkout(string currentUserIdPass) {
-	unsigned long int currentUserId;
-
-	currentUserId = openDoor(currentUserIdPass);
+void CentralControl::checkout(unsigned long int currentUserId) {
+	system("echo Door opened!\n");
 
 	try {
 		activeUsers->remove(currentUserId);
@@ -518,23 +473,12 @@ void CentralControl::checkout(string currentUserIdPass) {
 	}	
 }
 
-unsigned long int CentralControl::openDoor(string currentUserIdPass) {
-	unsigned long int currentUserId;
-	string currentUserPass;
-
-	try {
-		getUserIdPass(currentUserIdPass, currentUserId, currentUserPass);
-	} catch (const char* e) {
-		throw e;
-	}
-
+void CentralControl::openDoor(unsigned long int currentUserId) {
 	if (!isUserCheckedin(currentUserId)) {
 		throw "User not checked-in";
 	}
 
 	system("echo Door opened!\n");
-
-	return currentUserId;
 }
 
 string CentralControl::getActiveUsers() {
@@ -546,6 +490,7 @@ string CentralControl::getActiveUsers() {
 
 	string activeUsersId = activeUsers->listAll();
 	if (activeUsersId.empty()) {
+		allActiveUsers += "\n";
 		return allActiveUsers;
 	}
 
@@ -556,14 +501,17 @@ string CentralControl::getActiveUsers() {
 		}
 		try {
 			currentUserId = stoul(activeUsersId.substr(initialPosition, (finalPosition - initialPosition)));
-		} catch (const char* e) {
+		} catch (...) {
 			throw "Conversion from string to unsigned long int not valid";
 		}
 		currentUser = (User*) activeUsers->search(currentUserId);
 		if (currentUser == NULL) {
 			throw "Active Users list corrupted";
 		}
-		allActiveUsers += currentUser->toString();
+		allActiveUsers += to_string(currentUser->getId()) + ",";
+		allActiveUsers += currentUser->getName() + ",";
+		allActiveUsers += currentUser->getPhone() + ",";
+		allActiveUsers += currentUser->getEmail() + "\n";
 		initialPosition = finalPosition + 1;
 	}
 }
