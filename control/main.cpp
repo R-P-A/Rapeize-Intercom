@@ -24,7 +24,7 @@ int main() {
 
 		int i = 0;
 		// This variable is just for testing, in the future this will be while(true)
-		while (i < 34) {
+		while (i < 37) {
 			ServerSocket newSocket;
 			server.accept(newSocket);
 			cout << "Connected!" << endl;

@@ -138,15 +138,18 @@ User* CentralControl::stringToUser(string& dbLine) {
 
 void CentralControl::searchUserInDatabase(string& databaseString, size_t& initialPosition, size_t& finalPosition, unsigned long int id) {
 	string idString = to_string(id);
-	initialPosition = databaseString.find(idString);
-	if (initialPosition == string::npos) {
-		throw "User not found";
-	}
-	finalPosition = databaseString.find(",", initialPosition);
-	if (idString == databaseString.substr(initialPosition, (finalPosition - initialPosition))) {
-		finalPosition = databaseString.find("\n", initialPosition);
-	} else {
-		throw "User not found";
+	initialPosition = 0;
+	while (true) {
+		finalPosition = databaseString.find(",", initialPosition);
+		if (idString == databaseString.substr(initialPosition, (finalPosition - initialPosition))) {
+			finalPosition = databaseString.find("\n", initialPosition);
+			return;
+		}
+		initialPosition = databaseString.find("\n", initialPosition);
+		if (initialPosition == string::npos) {
+			throw "User not found";
+		}
+		initialPosition++;
 	}
 }
 
@@ -197,6 +200,8 @@ void CentralControl::createUser(unsigned long int currentUserId, string inputUse
 		throw e;
 	}
 
+	cout << "before canModifyDatabase " << !canModifyDatabase(currentUserId) << endl;
+	cout << "database clear " << !(databaseString == "" || databaseString == "\n") << endl;
 	// If the user isn't admin logged-in and the file is not empty, throw exception
 	if (!canModifyDatabase(currentUserId)) {
 		if (!(databaseString == "" || databaseString == "\n")) {
@@ -425,22 +430,22 @@ void CentralControl::checkin(unsigned long int currentUserId, string currentUser
 		throw "Password do not match";
 	}
 
-	if (currentTimeSecs <= beginTimeSecs) {
+	if (currentTimeSecs < beginTimeSecs) {
 		delete checkinUser;
 		throw "Current time before beginning time";
 	}
 
-	if (currentTimeSecs >= endTimeSecs) {
+	if (currentTimeSecs > endTimeSecs) {
 		delete checkinUser;
 		throw "Current time after ending time";
 	}
 
-	if (currentWeekDay <= beginWeekDay) {
+	if (currentWeekDay < beginWeekDay) {
 		delete checkinUser;
 		throw "Current day of the week before begin week day";
 	}
 
-	if (currentWeekDay >= endWeekDay) {
+	if (currentWeekDay > endWeekDay) {
 		delete checkinUser;
 		throw "Current day of the week after end week day";
 	}

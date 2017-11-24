@@ -19,7 +19,7 @@ void callServer(string& input) {
 			i = 11;
 		}
 		catch(SocketException& e) {
-			cout << "Exception was caught: " << e.description();
+			cout << "Exception was caught: " << e.description() << endl;
 			i++;
 		}
 		usleep(500000);
@@ -68,10 +68,19 @@ int main() {
 	input = "createUser,487,pass,123,456,0,Rafael,1010,rafael@alevato.com,Monday,Friday,08:30,23:30\n";
 	callServer(input);
 	cout << "Try to create user 456 with user 123 which isn't admin" << endl;
-	input = "createUser,487,pass,456,456,0,Ruan,1010,ruan@molgero.com,Monday,Friday,08:30,23:30\n";
+	input = "createUser,123,456,456,456,0,Ruan,1010,ruan@molgero.com,Monday,Friday,08:30,23:30\n";
+	callServer(input);
+	cout << "Get all users successfully. The list is 123 and 487." << endl;
+	input = "getActiveUsers,487,pass";
 	callServer(input);
 
 	cout << endl << "---------------------- Checkin block -----------------------" << endl;
+	cout << "Checkout successfully with user 487" << endl;
+	input = "checkout,487,pass";
+	callServer(input);
+	cout << "Checkout successfully with user 123" << endl;
+	input = "checkout,123,456";
+	callServer(input);
 	cout << "Try to checkin with non-existing user" << endl;
 	input = "checkin,48,asd";
 	callServer(input);
