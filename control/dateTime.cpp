@@ -38,6 +38,10 @@ int DateTime::getDay() {
 	return timeDateInfo->tm_mday;
 }
 
+int DateTime::getDaysYear() {
+	return timeDateInfo->tm_yday;
+}
+
 string DateTime::getWeekDay() {
 	switch (timeDateInfo->tm_wday) {
 		case 0:
@@ -57,10 +61,6 @@ string DateTime::getWeekDay() {
 		default:
 			return "error";
 	}
-}
-
-int DateTime::getDaysYear() {
-	return timeDateInfo->tm_yday;
 }
 
 int DateTime::getHour() {

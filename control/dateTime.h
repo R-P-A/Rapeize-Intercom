@@ -63,16 +63,16 @@ class DateTime {
 		int getDay();
 		
 		/**
-		 *	Get the current week day updated according to last call of DateTime(), updateTimeDateInfo() or getCurrentDateTime().
-		 *	@return	The week day.
-		 */
-		string getWeekDay();
-		
-		/**
 		 *	Get the current day since start of the year updated according to last call of DateTime(), updateTimeDateInfo() or getCurrentDateTime().
 		 *	@return	The day since start of the year.
 		 */
 		int getDaysYear();
+		
+		/**
+		 *	Get the current week day updated according to last call of DateTime(), updateTimeDateInfo() or getCurrentDateTime().
+		 *	@return	The week day.
+		 */
+		string getWeekDay();
 		
 		/**
 		 *	Get the current hour updated according to last call of DateTime(), updateTimeDateInfo() or getCurrentDateTime().
