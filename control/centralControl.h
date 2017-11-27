@@ -18,6 +18,7 @@
 #include <fstream>
 #include <string>
 #include <iterator>
+#include <unistd.h>
 #include "myio.h"
 #include "user.h"
 #include "sortedList.h"
@@ -73,6 +74,8 @@ class CentralControl {
 		 *	@throw const char* "Input line in the wrong format".
 		 */
 		unsigned long int timeStringToNumber(string timeString);
+
+		void updateHTML();
 
 	public:
 		/**

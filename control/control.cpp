@@ -10,7 +10,10 @@
  *	
  *	The socket always waits for an input and returns something on each accept.
  *
- */
+ *	Possible outputs:
+ *	- 
+ *
+	 */
 
 #include <iostream>
 #include "serverSocket.h"
@@ -26,7 +29,7 @@ using namespace std;
  *	@param control The pointer to the main CentralControl.
  *	@param input String sent by the caller.
  *	@return The output to send to the caller.
- */
+	 */
 string callHandler(CentralControl* control, string& input);
 
 /**
@@ -126,7 +129,7 @@ int main() {
 		// Create the socket
 		ServerSocket server(8888);
 
-		while (true) {
+	while (true) {
 			ServerSocket newSocket;
 
 			// Keeps waiting here until a new socket is accepted
