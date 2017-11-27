@@ -201,7 +201,7 @@ void CentralControl::updateHTML() {
 		throw e;
 		return;		
 	}
-	initialPosition = 835;
+	initialPosition = 915;
 	finalPosition = htmlContent.find("</pre>", initialPosition);
 	if ((initialPosition == string::npos) || (finalPosition == string::npos)) {
 		throw "HTML Corrupted";
