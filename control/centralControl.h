@@ -17,6 +17,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <thread>
 #include <iterator>
 #include <unistd.h>
 #include "myio.h"
@@ -76,6 +77,8 @@ class CentralControl {
 		unsigned long int timeStringToNumber(string timeString);
 
 		void updateHTML();
+
+		static void openDoorGPIO();
 
 	public:
 		/**

@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -Wall
+CXXFLAGS = -Wall -pthread
 SRCS = centralControl.cpp dateTime.cpp model.cpp myio.cpp sortedList.cpp user.cpp socket.cpp serverSocket.cpp control.cpp
 OBJS = ${SRCS:.cpp=.o}
 

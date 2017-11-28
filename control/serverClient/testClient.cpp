@@ -12,6 +12,7 @@
 #include <string>
 #include <thread>
 #include <unistd.h>
+#include <ctime>
 #include "clientSocket.h"
 #include "socketException.h"
 
@@ -21,7 +22,7 @@ void callServer(string& input) {
 	int i = 0;
 	while (i < 10) {
 		try {
-			ClientSocket client_socket("192.168.1.95", 8888);
+			ClientSocket client_socket("192.168.1.245", 8888);
 			string reply;
 			client_socket << input;
 			client_socket >> reply;
@@ -40,6 +41,7 @@ int main() {
 	system("rm ../userDatabase.csv");
 
 	string input;
+	clock_t clocks = clock();
 
 	cout << endl << "------------------ Call with wrong inputs ------------------" << endl;
 	cout << "Try to call with input missing id and password" << endl;
@@ -286,6 +288,9 @@ int main() {
 	input = "createUser,487,pass,487,pass,1,John,+554898888-8888,john@doe.com,Sunday,Saturday,08:30,23:30\n";
 	callServer(input);
 	cout << "------------------------------------------------------------" << endl << endl;
+
+	clocks = clock() - clocks;
+	cout << "Total test runtime: " << (float) clocks / CLOCKS_PER_SEC << " s" << endl << endl;
 
 	return 0;
 }
