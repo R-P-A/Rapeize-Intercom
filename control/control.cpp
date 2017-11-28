@@ -10,10 +10,56 @@
  *	
  *	The socket always waits for an input and returns something on each accept.
  *
- *	Possible outputs:
- *	- 
+ *	Possible outputs for the caller:
+ *	- wrong input:
+ *		- "Missing id and password"
+ *		- "Missing password"
+ *		- "Wrong id input"
+ *	- checkin:
+ *		- "Checked-in with success,admin"
+ *		- "Checked-in with success,user"
+ *		- "Couldn't open the file"
+ *		- "User not found"
+ *		- "Password do not match"
+ *		- "Wrong weekDay input"
+ *		- "Current time before beginning time"
+ *		- "Current time after ending time"
+ *		- "Current day of the week before begin week day"
+ *		- "Current day of the week after end week day"
+ *	- getActiveUsers:
+ *		- Active user in the following format: "id,pass,name,phone,email"
+ *		- "Active Users list corrupted"
+ *	- checkout:
+ *		- "Checked-out with success"
+ *		- "Id not found"
+ *		- checkin possible outputs
+ *	- openDoor:
+ *		- "Door opened"
+ *		- "User not checked-in"
+ *		- checkin possible outputs
+ *	- createUser:
+ *		- "No permission to create user"
+ *		- "First user isn't admin"
+ *		- "User already exists"
+ *		- "User created"
+ *		- checkin possible outputs
+ *	- readUser:
+ *		- The user in the format "id,password,isAdmin,name,phone,email,beginWeekDay,endWeekDay,beginTime,endTime"
+ *		- "No permission to read user"
+ *		- "User not found"
+ *		- checkin possible outputs
+ *	- updateUser:
+ *		- "User updated"
+ *		- "No permission to update user"
+ *		- "User not found"
+ *		- checkin possible outputs
+ *	- deleteUser:
+ *		- "User deleted"
+ *		- "No permission to delete user"
+ *		- "User not found"
+ *		- checkin possible outputs
  *
-	 */
+ */
 
 #include <iostream>
 #include "serverSocket.h"
