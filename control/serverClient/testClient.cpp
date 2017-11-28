@@ -22,7 +22,7 @@ void callServer(string& input) {
 	int i = 0;
 	while (i < 10) {
 		try {
-			ClientSocket client_socket("192.168.1.245", 8888);
+			ClientSocket client_socket("192.168.1.170", 8888);
 			string reply;
 			client_socket << input;
 			client_socket >> reply;
