@@ -10,6 +10,11 @@ CentralControl::CentralControl() {
 	} catch (const char* e) {
 		throw e;
 	}
+
+	// Initialize GPIO
+	system("sudo echo \"4\" > /sys/class/gpio/export");
+	system("sudo echo \"out\" > /sys/class/gpio/gpio4/direction");
+	system("sudo echo \"0\" > /sys/class/gpio/gpio4/value");
 }
 
 CentralControl::~CentralControl() {
@@ -177,6 +182,40 @@ bool CentralControl::isUserCheckedin(unsigned long int id) {
 	return true;
 }
 
+void CentralControl::updateHTML() {
+	string allActiveUsers;
+	string htmlContent;
+	string filename = "/var/www/html/index.html";
+	size_t initialPosition, finalPosition;
+
+	try {
+		allActiveUsers = getActiveUsers();		
+	} catch (const char* e) {
+		throw e;
+		return;
+	}
+
+	try {
+		readFile(htmlContent, filename);
+	} catch (const char* e) {
+		throw e;
+		return;		
+	}
+	initialPosition = 915;
+	finalPosition = htmlContent.find("</pre>", initialPosition);
+	if ((initialPosition == string::npos) || (finalPosition == string::npos)) {
+		throw "HTML Corrupted";
+	}
+	htmlContent.replace(initialPosition, (finalPosition - initialPosition), allActiveUsers);
+
+	try {
+		writeFileClear(htmlContent, filename);
+	} catch (const char* e) {
+		throw e;
+		return;		
+	}
+}
+
 bool CentralControl::canModifyDatabase(unsigned long int id) {
 	User* tempUser = (User*) activeUsers->search(id);
 	if (tempUser == NULL) {
@@ -304,6 +343,11 @@ void CentralControl::updateUser(unsigned long int currentUserId, string inputUse
 	User* activeUser = (User*) activeUsers->search(inputUser->getId());
 	if (activeUser != NULL) {
 		activeUsers->update(inputUser);
+		try {
+			updateHTML();		
+		} catch (const char* e) {
+			throw e;
+		}
 	}
 	
 }
@@ -453,7 +497,10 @@ void CentralControl::checkin(unsigned long int currentUserId, string currentUser
 		throw "Current day of the week after end week day";
 	}
 
-	system("echo Door opened!\n");
+	// Open the door for 3 seconds.
+	system("sudo echo \"1\" > /sys/class/gpio/gpio4/value");
+	sleep(3);
+	system("sudo echo \"0\" > /sys/class/gpio/gpio4/value");
 		
 	try {
 		activeUsers->insert(checkinUser);
@@ -461,16 +508,31 @@ void CentralControl::checkin(unsigned long int currentUserId, string currentUser
 		delete checkinUser;
 		throw e;
 	}
+
+	try {
+		updateHTML();		
+	} catch (const char* e) {
+		throw e;
+	}
 }
 
 void CentralControl::checkout(unsigned long int currentUserId) {
-	system("echo Door opened!\n");
+	// Open the door for 3 seconds.
+	system("sudo echo \"1\" > /sys/class/gpio/gpio4/value");
+	sleep(3);
+	system("sudo echo \"0\" > /sys/class/gpio/gpio4/value");
 
 	try {
 		activeUsers->remove(currentUserId);
 	} catch (const char* e) {
 		throw e;
-	}	
+	}
+
+	try {
+		updateHTML();		
+	} catch (const char* e) {
+		throw e;
+	}
 }
 
 void CentralControl::openDoor(unsigned long int currentUserId) {
@@ -478,7 +540,10 @@ void CentralControl::openDoor(unsigned long int currentUserId) {
 		throw "User not checked-in";
 	}
 
-	system("echo Door opened!\n");
+	// Open the door for 3 seconds.
+	system("sudo echo \"1\" > /sys/class/gpio/gpio4/value");
+	sleep(3);
+	system("sudo echo \"0\" > /sys/class/gpio/gpio4/value");
 }
 
 string CentralControl::getActiveUsers() {
