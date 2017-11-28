@@ -1,4 +1,5 @@
 #include <iostream>
+#include <ctime>
 #include "centralControl.h"
 #include "user.h"
 
@@ -6,6 +7,7 @@ using namespace std;
 
 int main() {
 	system("rm userDatabase.csv");
+	clock_t clocks = clock();
 
 	CentralControl* tempCI;
 	try {
@@ -153,9 +155,9 @@ int main() {
 
 	cout << endl << "Read first, middle and last user successfully" << endl;
 	try {
-		cout << tempCI->readUser(14204800);
-		cout << tempCI->readUser(1380);
-		cout << tempCI->readUser(856489);
+		cout << tempCI->readUser(14204800, 14204800);
+		cout << tempCI->readUser(14204800, 1380);
+		cout << tempCI->readUser(14204800, 856489);
 		cout << "Success!!!" << endl;
 	} catch (char const* e) {
 		cout << e << endl;
@@ -163,7 +165,7 @@ int main() {
 
 	cout << endl << "Try to read user that don't exist with an id that one existing user contains in his id" << endl;
 	try {
-		cout << tempCI->readUser(85648);
+		cout << tempCI->readUser(14204800, 85648);
 		cout << "Success!!!" << endl;
 	} catch (char const* e) {
 		cout << e << endl;
@@ -184,9 +186,9 @@ int main() {
 
 	cout << endl << "Read updated users" << endl;
 	try {
-		cout << tempCI->readUser(14204800);
-		cout << tempCI->readUser(1380);
-		cout << tempCI->readUser(856489);
+		cout << tempCI->readUser(14204800, 14204800);
+		cout << tempCI->readUser(14204800, 1380);
+		cout << tempCI->readUser(14204800, 856489);
 		cout << "Success!!!" << endl;
 	} catch (char const* e) {
 		cout << e << endl;
@@ -312,7 +314,8 @@ int main() {
 		cout << e << endl;
 	}
 
-	system("echo hello world!");
+	clocks = clock() - clocks;
+	cout << "Total test runtime: " << (float) clocks / CLOCKS_PER_SEC << " s" << endl << endl;
 
 	delete tempCI;
 	return 0;

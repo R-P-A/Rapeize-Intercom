@@ -17,6 +17,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <thread>
 #include <iterator>
 #include <unistd.h>
 #include "myio.h"
@@ -75,7 +76,20 @@ class CentralControl {
 		 */
 		unsigned long int timeStringToNumber(string timeString);
 
+		/**
+		 *	Update the web page with the current active users each time it changes the list.
+		 *	@throw const char* "Input line in the wrong format".
+		 */
 		void updateHTML();
+
+		/**
+		 *	Open the door using the GPIO 4 of raspberry pi.
+		 *	@throw const char* "Couldn't open the file".
+		 *	@throw const char* "HTML Corrupted".
+		 *	@throw const char* "Conversion from string to unsigned long int not valid".
+		 *	@throw const char* "Active Users list corrupted".
+		 */
+		static void openDoorGPIO();
 
 	public:
 		/**

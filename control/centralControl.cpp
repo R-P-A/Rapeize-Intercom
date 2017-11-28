@@ -216,6 +216,12 @@ void CentralControl::updateHTML() {
 	}
 }
 
+void CentralControl::openDoorGPIO() {
+	system("sudo echo \"1\" > /sys/class/gpio/gpio4/value");
+	sleep(3);
+	system("sudo echo \"0\" > /sys/class/gpio/gpio4/value");
+}
+
 bool CentralControl::canModifyDatabase(unsigned long int id) {
 	User* tempUser = (User*) activeUsers->search(id);
 	if (tempUser == NULL) {
@@ -497,10 +503,7 @@ void CentralControl::checkin(unsigned long int currentUserId, string currentUser
 		throw "Current day of the week after end week day";
 	}
 
-	// Open the door for 3 seconds.
-	system("sudo echo \"1\" > /sys/class/gpio/gpio4/value");
-	sleep(3);
-	system("sudo echo \"0\" > /sys/class/gpio/gpio4/value");
+	thread (openDoorGPIO).detach();
 		
 	try {
 		activeUsers->insert(checkinUser);
@@ -517,10 +520,7 @@ void CentralControl::checkin(unsigned long int currentUserId, string currentUser
 }
 
 void CentralControl::checkout(unsigned long int currentUserId) {
-	// Open the door for 3 seconds.
-	system("sudo echo \"1\" > /sys/class/gpio/gpio4/value");
-	sleep(3);
-	system("sudo echo \"0\" > /sys/class/gpio/gpio4/value");
+	thread (openDoorGPIO).detach();
 
 	try {
 		activeUsers->remove(currentUserId);
@@ -540,10 +540,7 @@ void CentralControl::openDoor(unsigned long int currentUserId) {
 		throw "User not checked-in";
 	}
 
-	// Open the door for 3 seconds.
-	system("sudo echo \"1\" > /sys/class/gpio/gpio4/value");
-	sleep(3);
-	system("sudo echo \"0\" > /sys/class/gpio/gpio4/value");
+	thread (openDoorGPIO).detach();
 }
 
 string CentralControl::getActiveUsers() {
