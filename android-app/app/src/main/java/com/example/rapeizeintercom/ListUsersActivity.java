@@ -8,6 +8,7 @@ import android.widget.TextView;
 public class ListUsersActivity extends AppCompatActivity {
 
     TextView usersList;
+    String usersListOut = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,12 +21,9 @@ public class ListUsersActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         String message = bundle.getString("msgToActivity");
 
-        String[] users = message.split("\n");
-
         usersList = (TextView) findViewById(R.id.usersList);
         usersList.setVisibility(View.VISIBLE);
 
-        for(int i = 0; i< users.length; i++)
-            usersList.setText(users[i] + "\n");
+        usersList.setText(message);
     }
 }

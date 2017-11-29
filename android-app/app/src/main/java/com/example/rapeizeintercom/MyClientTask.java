@@ -59,9 +59,20 @@ public class MyClientTask extends AsyncTask<Void, Void, Void> {
              */
             dataOutputStream.writeBytes(msgToServer);
 
-            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            response = in.readLine();
-            readDone = true;
+            if(msgToServer != "getActiveUsers") {
+                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                response = in.readLine();
+                readDone = true;
+            } else {
+                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                StringBuilder everything = new StringBuilder();
+
+                while( (response = in.readLine()) != null)
+                    everything.append(response + "\n");
+
+                response = everything.toString();
+                readDone = true;
+            }
 
 //            LoginActivity.this.runOnUiThread(new Runnable() {
 //

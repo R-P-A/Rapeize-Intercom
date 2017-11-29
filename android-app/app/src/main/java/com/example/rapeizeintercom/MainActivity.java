@@ -10,6 +10,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
+import java.util.Arrays;
+
 public class MainActivity extends AppCompatActivity {
 
     Button button_check_in, button_list_users;
