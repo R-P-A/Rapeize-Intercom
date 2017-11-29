@@ -23,6 +23,7 @@ void readFile(string& output, string fileName) {
 	if (inputFile.is_open()) {
 		input.assign((istreambuf_iterator<char>(inputFile)), (istreambuf_iterator<char>()));
 		output = input;
+		inputFile.close();
 		return;
 	}
 
@@ -35,6 +36,7 @@ void readFile(string& output, string fileName) {
 	inputFile.open(fileName.c_str());
 	if (inputFile.is_open()) {
 		input.assign((istreambuf_iterator<char>(inputFile)), (istreambuf_iterator<char>()));
+		inputFile.close();
 	} else {
 		throw "Couldn't open the file";
 	}
