@@ -189,7 +189,7 @@ void CentralControl::updateHTML() {
 	size_t initialPosition, finalPosition;
 
 	try {
-		allActiveUsers = getActiveUsers();		
+		allActiveUsers = getActiveUsers();
 	} catch (const char* e) {
 		throw e;
 		return;
@@ -199,7 +199,7 @@ void CentralControl::updateHTML() {
 		readFile(htmlContent, filename);
 	} catch (const char* e) {
 		throw e;
-		return;		
+		return;
 	}
 	initialPosition = 915;
 	finalPosition = htmlContent.find("</pre>", initialPosition);
@@ -212,7 +212,7 @@ void CentralControl::updateHTML() {
 		writeFileClear(htmlContent, filename);
 	} catch (const char* e) {
 		throw e;
-		return;		
+		return;
 	}
 }
 

@@ -12,8 +12,8 @@
  *
  *	Possible outputs for the caller:
  *	- wrong input:
- *		- "Missing id and password"
- *		- "Missing password"
+ *		- "Missing id and password and not getActiveUsers"
+ *		- "Missing password and not getActiveUsers"
  *		- "Wrong id input"
  *	- checkin:
  *		- "Checked-in with success,admin"
@@ -86,8 +86,8 @@ string callHandler(CentralControl* control, string& input);
  *	@param password The caller password.
  *	@param userInput The rest of the input sent by the user
  *	@return The target id to be modified if it was sent by the user. Else 0.
- *	@throw "Missing id and password".
- *	@throw "Missing password".
+ *	@throw "Missing id and password and not getActiveUsers".
+ *	@throw "Missing password and not getActiveUsers".
  *	@throw "Wrong id input".
  */
 unsigned long int getCommandIdPassInput(string& input, string& command, unsigned long int& id, string& password, string& userInput);
@@ -276,16 +276,23 @@ unsigned long int getCommandIdPassInput(string& input, string& command, unsigned
 	
 	// Find command which must be first variable
 	finalPosition = input.find(',', 0);
-	if (finalPosition == string::npos) {
-		throw "Missing id and password";
-	}
 	command = input.substr(0, finalPosition);
+	if (finalPosition == string::npos) {
+		if (command == "getActiveUsers") {
+			return 0;
+		}
+		if (command == "getActiveUsers\n") {
+			command = command.substr(0, (command.length() - 1));
+			return 0;
+		}
+		throw "Missing id and password and not getActiveUsers";
+	}
 
 	// Find id which must be following variable
 	initialPosition = finalPosition + 1;
 	finalPosition = input.find(',', initialPosition);
 	if (finalPosition == string::npos) {
-		throw "Missing password";
+		throw "Missing password and not getActiveUsers";
 	}
 	try {
 		id = stoul(input.substr(initialPosition, finalPosition - initialPosition));

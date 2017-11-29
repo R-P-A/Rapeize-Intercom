@@ -38,7 +38,7 @@ void callServer(string& input) {
 }
 
 int main() {
-	system("rm ../userDatabase.csv");
+	system("rm -f ../userDatabase.csv");
 
 	string input;
 	clock_t clocks = clock();
@@ -69,7 +69,7 @@ int main() {
 	input = "createUser,487,pass,487,pass,1,John,+554898888-8888,john@doe.com,Sunday,Saturday,08:30\n";
 	callServer(input);
 	cout << "Get all users successfully. The list is empty." << endl;
-	input = "getActiveUsers,487,pass\n";
+	input = "getActiveUsers\n";
 	callServer(input);
 	cout << "Try to create first user 487 which isn't admin" << endl;
 	input = "createUser,487,pass,487,pass,0,John,+554898888-8888,john@doe.com,Sunday,Saturday,08:30,23:30\n";
@@ -87,7 +87,7 @@ int main() {
 	input = "createUser,123,456,456,456,0,Ruan,+554898888-8888,ruan@molgero.com,Sunday,Saturday,08:30,23:30\n";
 	callServer(input);
 	cout << "Get all users successfully. The list is 123 and 487." << endl;
-	input = "getActiveUsers,487,pass\n";
+	input = "getActiveUsers\n";
 	callServer(input);
 	cout << "Checkout successfully with user 487" << endl;
 	input = "checkout,487,pass\n";
@@ -114,7 +114,7 @@ int main() {
 	input = "readUser,123,456,123\n";
 	callServer(input);
 	cout << "Get all users successfully. The list is 123 and 487." << endl;
-	input = "getActiveUsers,487,pass\n";
+	input = "getActiveUsers\n";
 	callServer(input);
 	cout << "Checkout successfully with user 487" << endl;
 	input = "checkout,487,pass\n";
@@ -138,7 +138,7 @@ int main() {
 	input = "updateUser,487,pass,487,pass,1,John,+554898888-8888,john@doe.com,Sunday,Saturday,08:30\n";
 	callServer(input);
 	cout << "Get all users successfully. The list is empty." << endl;
-	input = "getActiveUsers,487,pass\n";
+	input = "getActiveUsers\n";
 	callServer(input);
 	cout << "Update user 487 successfully with user 487 before checking in (in case of server failure)" << endl;
 	input = "updateUser,487,pass,487,pass,1,Ruan,+554898888-8888,ruan@molgero.com,Sunday,Saturday,08:30,23:30\n";
@@ -153,13 +153,13 @@ int main() {
 	input = "updateUser,123,456,123,456,0,Kupas,+554898888-8888,ygor@kupas.com,Sunday,Saturday,08:30,23:30\n";
 	callServer(input);
 	cout << "Get all users successfully. The list is 123 and 487." << endl;
-	input = "getActiveUsers,487,pass\n";
+	input = "getActiveUsers\n";
 	callServer(input);
 	cout << "Update user 123 successfully with user 487" << endl;
 	input = "updateUser,487,pass,123,456,0,Rafael,+554898888-8888,rafael@alevato.com,Sunday,Saturday,08:30,23:30\n";
 	callServer(input);
 	cout << "Get all users successfully. The list is 123 and 487." << endl;
-	input = "getActiveUsers,487,pass\n";
+	input = "getActiveUsers\n";
 	callServer(input);
 	cout << "Checkout successfully with user 487" << endl;
 	input = "checkout,487,pass\n";
@@ -177,7 +177,7 @@ int main() {
 	input = "checkin,487,pas\n";
 	callServer(input);
 	cout << "Get all users successfully. The list is empty." << endl;
-	input = "getActiveUsers,487,pass\n";
+	input = "getActiveUsers\n";
 	callServer(input);
 	cout << "Checkin successfully with user 487" << endl;
 	input = "checkin,487,pass\n";
@@ -189,7 +189,7 @@ int main() {
 	input = "checkin,123,456\n";
 	callServer(input);
 	cout << "Get all users successfully. The list has user 123 and 487." << endl;
-	input = "getActiveUsers,487,pass\n";
+	input = "getActiveUsers\n";
 	callServer(input);
 	cout << "------------------------------------------------------------" << endl << endl;
 	
@@ -201,7 +201,7 @@ int main() {
 	input = "checkout,123,456\n";
 	callServer(input);
 	cout << "Get all users successfully. The list is empty." << endl;
-	input = "getActiveUsers,487,pass\n";
+	input = "getActiveUsers\n";
 	callServer(input);
 	cout << "Checkout successfully with user 487 before checking in (in case of server failure)" << endl;
 	input = "checkout,487,pass\n";
@@ -213,7 +213,7 @@ int main() {
 	input = "checkout,487,pas\n";
 	callServer(input);
 	cout << "Get all users successfully. The list is empty." << endl;
-	input = "getActiveUsers,487,pass\n";
+	input = "getActiveUsers\n";
 	callServer(input);
 	cout << "------------------------------------------------------------" << endl << endl;
 
@@ -222,13 +222,13 @@ int main() {
 	input = "openDoor,487,pass\n";
 	callServer(input);
 	cout << "Get all users successfully. The list has user 487." << endl;
-	input = "getActiveUsers,487,pass\n";
+	input = "getActiveUsers\n";
 	callServer(input);
 	cout << "Checkout successfully with user 487" << endl;
 	input = "checkout,487,pass\n";
 	callServer(input);
 	cout << "Get all users successfully. The list is empty." << endl;
-	input = "getActiveUsers,487,pass\n";
+	input = "getActiveUsers\n";
 	callServer(input);
 	cout << "Try to open door with non-existing user before checking in (in case of server failure) with non-existing id" << endl;
 	input = "checkout,48,pass\n";
@@ -237,7 +237,7 @@ int main() {
 	input = "checkout,487,pas\n";
 	callServer(input);
 	cout << "Get all users successfully. The list is empty." << endl;
-	input = "getActiveUsers,487,pass\n";
+	input = "getActiveUsers\n";
 	callServer(input);
 	cout << "Checkin successfully with user 487" << endl;
 	input = "checkin,487,pass\n";
@@ -246,7 +246,7 @@ int main() {
 	input = "openDoor,487,pass\n";
 	callServer(input);
 	cout << "Get all users successfully. The list has user 487." << endl;
-	input = "getActiveUsers,487,pass\n";
+	input = "getActiveUsers\n";
 	callServer(input);
 	cout << "Checkout successfully with user 487" << endl;
 	input = "checkout,487,pass\n";
@@ -261,7 +261,7 @@ int main() {
 	input = "deleteUser,123,456,487\n";
 	callServer(input);
 	cout << "Get all users successfully. The list has user 123 and 487." << endl;
-	input = "getActiveUsers,487,pass\n";
+	input = "getActiveUsers\n";
 	callServer(input);
 	cout << "Delete user 123 successfully with user 487" << endl;
 	input = "deleteUser,487,pass,123\n";
@@ -273,7 +273,7 @@ int main() {
 	input = "checkin,123,456\n";
 	callServer(input);
 	cout << "Get all users successfully. The list has user 487." << endl;
-	input = "getActiveUsers,487,pass\n";
+	input = "getActiveUsers\n";
 	callServer(input);
 	cout << "Create successfully user 123 again" << endl;
 	input = "createUser,487,pass,123,456,0,Rafael,+554898888-8888,rafael@alevato.com,Sunday,Saturday,08:30,23:30\n";
