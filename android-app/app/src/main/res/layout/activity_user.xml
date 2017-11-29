@@ -4,35 +4,42 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.rapeizeintercom.MainActivity">
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.example.rapeizeintercom.UserActivity">
 
     <TextView
-        android:id="@+id/welcome"
+        android:id="@+id/user_welcome"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="88dp"
-        android:text="@string/welcome"
+        android:gravity="center"
+        android:text="@string/user_welcome"
         android:textSize="30sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/welcome_question"
+        android:id="@+id/user_question"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="@string/welcome_question"
+        android:text="@string/user_question"
         android:textSize="18sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/welcome" />
+        app:layout_constraintTop_toBottomOf="@+id/user_welcome" />
 
     <Button
-        android:id="@+id/button_check_in"
+        android:id="@+id/button_check_out"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/button_check_in"
+        android:text="@string/signOut"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -41,14 +48,14 @@
         app:layout_constraintVertical_bias="0.551" />
 
     <Button
-        android:id="@+id/button_list_users"
+        android:id="@+id/button_open"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="@string/button_list_users"
+        android:text="@string/button_open"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_check_in" />
+        app:layout_constraintTop_toBottomOf="@+id/button_check_out" />
 
 </android.support.constraint.ConstraintLayout>
